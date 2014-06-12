@@ -1,0 +1,52 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+    <title>Youdao Dictionary</title> 
+    <link rel="stylesheet" type="text/css" href="style/style.css">
+</head>
+<body>
+  <div class="input_container">
+    <button id="search" class="query_button"></button>
+    <input id="query_word" type="text" name="" placeholder="输入查找的单词或语句" class="input_area">
+  </div>
+
+  <div id="query_result" class="result_container unshow"></div>
+
+  <div class="tips_container unshow" id="tips">
+    <p>
+      Tips: 你可以通过“Ctrl+Shift+F”快速启动词典，
+      也可以在<span id="key_set" class="link">这里</span>自定义快捷键哦:)
+    </p>
+    <div id="turn_off_tips">不再显示Tips</div>
+  </div>
+
+  <div class="setting_block unshow" id="settings">
+    <div>
+      <input type="checkbox" name="mouseSelect" id="mouseSelect"><label for="mouseSelect">启用划词翻译</label>
+    </div>
+    <div>
+      <input type="radio" name="showPosition" value="side" id="showPositionSide"><label for="showSide">翻译结果显示在浏览器边缘</label>
+    </div>
+    <div>
+      <input type="radio" name="showPosition" value="near" id="showPositionNear"><label for="showNear">翻译结果显示在单词附近</label>
+    </div>
+    <div>
+      <label for="showDuration"><b id="currentDuration"></b>秒后结果消失</label>
+      <input type="range" name="showDuration" min="3" max="10" value="5" id="showDuration">
+    </div>    
+  </div>
+  
+  <footer>
+    <div class="setting_button link" id="setting_button"></div>
+    Powered By <img src="http://www.youdao.com/help/fanyiapi/brand/002.gif" alt="有道翻译">
+    <div class="contact_info">
+      <span id="email" class="link" title="如有问题可以发邮件"></span>
+      <span id="issue" class="link" title="在Github上提出问题或建议"></span>
+      <span id="source" class="link" title="源码在这里，欢迎Fork"></span>
+    </div>
+  </footer>
+  <script src="utility.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>

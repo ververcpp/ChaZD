@@ -1,0 +1,368 @@
+@import url(fonts/YDdict-Icon.css);
+
+body {
+  margin: 0.5em;
+  padding: 0;
+  width: 300px;
+  background-color: #faf8ef;
+  color: #776e65;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 14px;
+}
+
+ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.input_container{
+  position: relative;
+  margin: 0;
+  border: 1px solid #dbd8e4;
+  box-shadow: -0.2px -0.2px 0.2px 0.2px ;
+  border-radius: 3px;
+}
+
+.input_container:after {
+  content: "";
+  display: block;
+  clear: both;
+}
+
+.input_area {
+  display: block;
+  padding: 2px;
+  border: none;
+  font-size: 1.3em;
+  width: 270px;
+  margin: 0 0 0 17px;
+}
+
+.input_area:focus {
+  outline: none;
+}
+
+.query_button {
+  display: block;
+  height: 100%;
+  float: left;
+  border: 0;
+  border-radius: 1px; 
+  margin: 0;
+  padding: 4px;
+  background-color: transparent;
+  line-height: 19px;
+  color: rgba(0, 0, 0, 0.2);
+  
+}
+
+.query_button:focus {
+  outline-color: transparent;
+}
+
+.query_button:hover {
+  color: rgba(0, 0, 0, 1); 
+}
+
+.query_button:active {
+  color: rgba(235, 0, 0, 1);
+}
+
+.query_button::after {
+  content: '\E800';
+  -webkit-transition: color 0.2s linear;
+  transition: color 0.2s linear;
+  font-size: 0.8em;
+  font-family: "YDdict-Icon";
+}
+
+
+
+/*Result Block*/
+.result_container {
+  margin-top: 10px;
+  padding: 4px;
+}
+
+.unshow {
+  display: none;
+}
+
+/*Result Block -- title contaniner*/
+.title_container {
+  margin-left: 10px;
+  display: flex;
+  min-width: 50%;
+  max-width: 100%;
+  font-size: 22px;
+}
+
+.title_container .title_phonetic {
+  display: none;
+}
+
+.title_container .title_word {
+  position: relative;
+  max-width: 50%;
+  text-align: left;
+}
+
+.title_container .title_word .voice_container {
+  display: inline-block;
+  margin-left: 10px;
+  
+}
+
+.title_container .title_word .voice_container::after {
+  content: '\E804';
+  font-family: "YDdict-Icon";
+  font-size: 70%;
+}
+
+.title_container .title_translation {
+  flex:1;
+  margin-left: 10px;
+  text-align: justify;
+  max-width: 50%;
+}
+
+
+/*Result Block -- basic container*/
+.basic_container {
+  margin-top: 10px;
+}
+
+/*Result Block -- basic container -- phonetic container*/
+.phonetic_container {
+  margin-left: 10px;
+  font-size: 1em;
+}
+
+.uk_phonetic_container::before {
+  content: "英 ";
+  color: #776e65;
+}
+
+.us_phonetic_container::before {
+  content: "美 ";
+  color: #776e65;
+}
+
+.uk_phonetic_container, .us_phonetic_container {
+  display: inline-block;
+  margin-right: 10px;
+  color: red;
+}
+
+.voice_container {
+  cursor: pointer;
+  display: inline-block;
+  margin-left: 10px;
+  color: rgba(119, 110, 101, 0.2);
+} 
+
+.voice_container::after {
+  content: '\E803';
+  font-family: "YDdict-Icon";
+  
+  -webkit-transition: color 0.2s linear;
+  transition : color 0.2s linear;
+}  
+
+.voice_container:hover {
+  color: rgba(119, 110, 101, 1);
+}
+
+
+/*Result Block -- basic container -- explains container*/
+.explains_container {
+  font-size: 14px;
+  margin-top: 10px;
+}
+
+.explains_list {
+  border: 1px solid #F0EFF0;
+  border-radius: 1px;
+  padding: 10px;
+}
+
+.explains_list li {
+  margin-bottom: 5px;
+}
+
+.property_container {
+  margin-right: 5px;  
+}
+
+/*Result Block -- web explains container*/
+.web_explains_container {
+  font-size: 14px;
+  margin-top: 20px;
+  position: relative;
+}
+
+.web_title {
+  position: absolute;
+  top: -5px;
+  left: 10px;
+  background-color: #faf8ef;
+  font-weight: bold;
+}
+
+.web_title::before {
+  content: '\E802';
+  font-family: "YDdict-Icon";
+  margin-right: 5px;
+  color: #ccbb1e;
+}
+
+.web_explains_list {
+  border: 1px solid #F0EFF0;
+  border-radius: 1px;
+  padding: 10px;
+  padding-top: 20px;
+}
+
+.web_explains_list li {
+  margin-bottom: 5px;
+}
+
+.tips_container {
+  position: relative;
+  padding: 5px;
+  font-size: 0.4em;
+  color: rgba(0, 0, 0, 0.4);
+}
+
+.tips_container p {
+  margin: 0;
+  margin-top: 10px;
+  padding: 0;
+}
+
+.tips_container .link {
+  color: rgba(0, 161, 194, 1);
+  cursor: pointer; 
+  -webkit-transition: color 0.2s linear;
+  transition : color 0.2s linear;
+}
+
+#turn_off_tips {
+  position: absolute;
+  right: 5px;
+  bottom: 5px;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+footer {
+  font-size: 0.3em;
+  text-align: center;
+  position: relative;
+}
+
+footer img {
+  position: relative;
+  top:4px;
+  width: 50px;
+}
+
+.contact_info {
+  font-size: 0.3em;
+  font-family: "YDdict-Icon";
+  position: absolute;
+  bottom:0;
+  right: 0;
+}
+
+.link{
+  cursor: pointer;
+  text-decoration: none;
+  color: rgba(0, 0, 0, 0.2);
+  opacity: 0.5;
+}
+
+.link:hover{
+  color: rgba(0, 0, 0, 1);
+}
+
+#email::after {
+  content: '\E806';
+
+  -webkit-transition: color 0.2s linear;
+  transition : color 0.2s linear;
+}
+
+#issue::after {
+  content: '\E805';
+
+  -webkit-transition: color 0.2s linear;
+  transition : color 0.2s linear;
+}
+
+#source::after {
+  content: '\E807';
+
+  -webkit-transition: color 0.2s linear;
+  transition : color 0.2s linear;
+}
+
+.setting_button {
+  position: absolute;
+  bottom:0;
+  left: 0;
+  cursor: pointer;
+  font-size: 0.3em;
+  font-family: "YDdict-Icon";
+}
+
+.setting_button_clicked {
+  color: #000000;
+}
+
+.setting_button::after {
+  content: "\E80A"; 
+  -webkit-transition: color 0.2s linear;
+  transition : color 0.2s linear; 
+}
+
+.setting_block {
+  margin: 5px 0;
+  padding: 10px;
+  position: relative;
+  text-align: justify;
+  border: 1px solid #F0EFF0;
+  border-radius: 1px;
+  background-color: #f2ecd4;
+}
+
+.setting_block div {
+  margin-top: 5px;
+}
+
+.setting_block label {
+  margin-left: 5px;
+}
+
+.setting_block input {
+  margin: 0;
+}
+
+input[type="range"] {
+  width: 100px;
+  position: relative;
+  top:3px;
+}
+
+#save {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+#cancel {
+  position: absolute;
+  top: 25px;
+  right: 0;
+}

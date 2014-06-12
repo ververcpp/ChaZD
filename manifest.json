@@ -1,0 +1,51 @@
+{
+  "manifest_version": 2,
+
+  "name": "ChaZD",
+  "version": "0.6.0",
+  "description": "ChaZD 查字典，简洁易用的英汉字典扩展程序，支持划词哦:)",
+
+  "permissions": [
+    "http://dict.youdao.com/*",
+    "http://fanyi.youdao.com/*",
+    "contextMenus",
+    "tabs",
+    "storage"
+  ],
+
+  "background": {
+      "persistent": true,
+      "scripts": [ "utility.js", "background.js" ]
+   },
+
+  "content_scripts": [ {
+    "all_frames": true,
+    "css": ["style/inPage.css", "style/fonts/YDdict-Icon.css"],
+    "js": ["utility.js", "selection.js"],
+    "matches": ["<all_urls>"]
+      
+  } ],
+
+  "browser_action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "38": "icons/icon38.png",
+      "19": "icons/icon19.png"
+    }
+  },
+
+  "icons": { 
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png" 
+  },
+
+  "commands": {
+    "_execute_browser_action": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+F",
+        "mac": "MacCtrl+Shift+F"
+      }
+    }
+  }
+}

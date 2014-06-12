@@ -1,0 +1,89 @@
+.ChaZD_result_side_list {
+    position: fixed;
+    right: 5px;
+    top: 5px;
+    margin: 0;
+    padding: 0;
+    width: 250px;
+    z-index: 99999999;
+    text-align: left;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 14px;
+}
+
+.ChaZD_result_container {
+    width: 250px;
+    background-color: #ffdb70;
+    padding: 5px;
+    margin: 2px; 
+    opacity: 0.9;
+    border: 1px solid rgba(209, 209, 209, 1);
+    border-radius: 2px;
+    z-index: 99999999;
+}
+
+.ChaZD_result_container .title_container {
+    color: rgba(41, 94, 255, 1);
+    display: flex;
+    max-width: 100%;
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.ChaZD_result_container .title_container .title_word {
+    position: relative;
+    max-width: 100%;
+    text-align: left;
+}
+
+.ChaZD_result_container .title_container .title_translation {
+    display: none;
+}
+
+/*Result Block -- basic container*/
+.ChaZD_result_container .basic_container {
+    
+}
+
+/*Result Block -- basic container -- phonetic container*/
+.ChaZD_result_container .phonetic_container {
+    display: none;
+}
+
+/*
+.ChaZD_result_container .voice_container::after {
+  content: '\E803';
+  font-family: "YDdict-Icon";
+  
+  -webkit-transition: color 0.2s linear;
+  transition : color 0.2s linear;
+}  
+
+.ChaZD_result_container .voice_container:hover {
+  color: rgba(119, 110, 101, 1);
+}
+*/
+
+/*Result Block -- basic container -- explains container*/
+.ChaZD_result_container .explains_container {
+    font-size: 14px;
+    margin-top: 10px;
+}
+
+.ChaZD_result_container .explains_list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.ChaZD_result_container .explains_list li {
+    margin-bottom: 5px;
+}
+
+.ChaZD_result_container .property_container {
+    margin-right: 5px;  
+}
+
+.ChaZD_result_container .voice_container {
+    display: none;
+}
