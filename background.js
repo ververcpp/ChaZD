@@ -53,8 +53,9 @@ ChaZD.prototype.parseResult = function (responseText) {
     var resultObj = {};
     var validResult = this.checkErrorCode(result["errorCode"]);
     if (!validResult["error"]) {
-        var titleBlock = this.initTitle(result);
-        resultObj.titleBlock = titleBlock;
+        var title = this.initTitle(result);
+        resultObj.titleBlock = title.titleBlock;
+        resultObj.haveTranslation = title.haveTranslation;
         if (result["basic"] !== undefined) {
             var basicBlock = this.parseBasicResult(result);
             resultObj.basicBlock = basicBlock
@@ -71,14 +72,20 @@ ChaZD.prototype.parseResult = function (responseText) {
 
 ChaZD.prototype.initTitle = function (result) {
     var translation = result["translation"];
-    console.log(translation + "   " + result["translation"] );
     var queryWord = result["query"];
-    
+    console.log("[ChaZD] queryWord: %s, translation: %s.", queryWord, translation.toString());
+    var haveTranslation = true;
+    if (trim(queryWord.toLowerCase()) === trim(translation.toString().toLowerCase()))
+        haveTranslation = false;
+
     var voiceContainer = this.initVoice(queryWord);
     var titleWord = fmt(frames.titleWord, queryWord, voiceContainer);
     var titleTranslation = fmt(frames.titleTranslation, translation.toString());
 
-    return fmt(frames.titleContainer, titleWord,  titleTranslation);
+    return {
+        titleBlock : fmt(frames.titleContainer, titleWord,  titleTranslation),
+        haveTranslation : haveTranslation
+    };
 }
 
 ChaZD.prototype.parseBasicResult = function (result) {
@@ -191,7 +198,7 @@ ChaZD.prototype.parseWebResult = function (result) {
     var webExplainsContent = "";
     var i;
     for (i = 0; i < web.length ; i++) {
-        var webEplain = fmt(frames.webEplain, web[i].key + web[i].value);
+        var webEplain = fmt(frames.webEplain, web[i].key, web[i].value);
         webExplainsContent += webEplain;
     }
 
@@ -204,9 +211,74 @@ ChaZD.prototype.parsePhrase = function (queryWord, key) {
     words = queryWord.split(/\s+/);
 }
 */
+window.Notifications = window.Notifications || window.webkitNotifications;
+
+function showNotification(note) {
+    if (!Notifications) {
+        console.log("[ChaZD] Your browse don't support notification.");
+        return;
+    }
+    var havePermission = Notifications.checkPermission();
+    if (havePermission == 0) {
+        var notification = Notifications.createNotification(
+            note.icon || chrome.extension.getURL('icons/icon128.png'),
+            note.title || 'ChaZD 查字典',
+            note.content
+        );
+        notification.onclick = function () {
+            window.open("https://chrome.google.com/webstore/detail/chazd/nkiipedegbhbjmajlhpegcpcaacbfggp");
+        };
+        notification.show();
+    } else {
+        Notifications.requestPermission();
+    }
+
+    return notification;
+}
+
+chrome.runtime.onInstalled.addListener(
+    function (details) {
+        if (details.reason === "install") {
+            console.log("[ChaZD] first install.")
+            showNotification({
+                title : "感谢支持ChaZD！",
+                content : "ChaZD力求成为最简洁易用的Chrome词典扩展，欢迎提出您的意见或建议。" + 
+                    "如果觉得ChaZD还不错，记得给5星好评哦:)"
+            })
+            //alert("Thank you for install my app:)");
+        } else if (details.reason === "update") {
+            console.log("[ChaZD] update from version " + details.previousVersion);
+            //alert("New version has updated!");
+            showNotification({
+                title : "ChaZD 更新到0.7.0版啦！",
+                content : "新版本的ChaZD增加组合键划词翻译功能，并修改了划词结果的显示模式，更符合用户的使用习惯。" + 
+                    "更多内容可以点击详情查看。期待您的建议:)"
+            })
+        }
+    }
+);
+
+chrome.storage.sync.get(null,function (items) {
+    //console.log(JSON.stringify(items));
+    if (items["showTips"] === undefined ) {
+        console.log("storage 是空的");
+        chrome.storage.sync.set(settings);
+    } else {
+        console.log("[ChaZD][Current Settings]")
+        for (var key in items) {
+            if (settings[key] === undefined) {
+                chrome.storage.sync.remove(key);
+                console.log("Remove setting item '%s'", key);
+            } else {
+                settings[key] = items[key];
+            }
+        }
+        chrome.storage.sync.set(settings);
+    }
+});
 
 chrome.runtime.onMessage.addListener(
-    function(message, sender, sendResponse){
+    function (message, sender, sendResponse) {
         console.log("message from sender:" + JSON.stringify(message));
         console.log("sender is " + JSON.stringify(sender));
         new ChaZD(message.queryWord, sendResponse);

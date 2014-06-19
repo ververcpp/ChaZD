@@ -1,16 +1,21 @@
-var button = $("search");
-var tipsContainer = $("tips");
-var input = $("query_word");
-var queryResultContainer = $("query_result");
+var $button = $("#search");
+var $tipsContainer = $("#tips");
+var $input = $("#query_word");
+var $queryResultContainer = $("#query_result");
+
+if (-1 !== window.navigator.platform.toLowerCase().indexOf("mac")) {
+    $("#ctrl_option").html("Command");
+}
 
 function queryInPopup() {
-    if (!tipsContainer.classList.contains("unshow"))
-        tipsContainer.classList.add("unshow");
-    input.select();
-    if (queryResultContainer.classList.contains("unshow"))
-        queryResultContainer.classList.remove("unshow");
-    queryResultContainer.innerHTML = "ψ(._. )>词典君正在翻译。。。";
-    chrome.extension.sendMessage({queryWord: input.value}, function(response) {
+    if (!$tipsContainer.hasClass("unshow"))
+        $tipsContainer.addClass("unshow");
+    $input.select();
+    if ($queryResultContainer.hasClass("unshow"))
+        $queryResultContainer.removeClass("unshow");
+    $queryResultContainer.html("ψ(._. )>词典君正在翻译。。。");
+    console.log("input value: " + $input.val());
+    chrome.extension.sendMessage({queryWord: $input.val()}, function (response) {
         //alert("response from xhr: " + JSON.stringify(response));
         var resultObj = response;
         var resultBlock = "";
@@ -22,100 +27,145 @@ function queryInPopup() {
             if (resultObj.webBlock !== undefined) {
                 resultBlock += resultObj.webBlock;
             }
-            queryResultContainer.innerHTML = resultBlock;
-            var voiceCollection = document.querySelectorAll(".voice_container");
-            for (var i = 0; i < voiceCollection.length; i++) {
-                var src = voiceCollection[i].getAttribute("data-src");
+            $queryResultContainer.html(resultBlock);
+            var voiceCollection = $(".voice_container");
+            //console.log("voiceCollection length: " + voiceCollection.length);
+            voiceCollection.each(function(index, el) {
+                var src = $(this).attr('data-src');
+                //console.log(src);
                 var audioBlock = document.createElement("audio");
                 audioBlock.setAttribute("src", src);
-                voiceCollection[i].appendChild(audioBlock);
-                audioBlock.addEventListener("ended", function(event) {
+                //$.get();
+                audioBlock.addEventListener("ended", function (event) {
                     this.load();
                 })
-                voiceCollection[i].addEventListener("click", function(event) {
-                    this.firstChild.play();
+                $(this).click(function (event) {
+                    audioBlock.play();
                 })
-            }
+            });
         } else {
-            queryResultContainer.innerHTML = resultObj.validMessage + "<br>词典君崩溃了（┬_┬）";
+            $queryResultContainer.html(resultObj.validMessage + "<br>词典君崩溃了（┬_┬）");
         }
     });
 }
 
-button.addEventListener("click", function(event) {
+$button.click(function (event) {
     queryInPopup();
 });
 
-input.focus();
-input.addEventListener("keyup", function(event) {
+$input.focus();
+$input.keyup(function (event) {
     if (event.keyCode === 13) {
         queryInPopup();
     }
 });
 
 function createLink(link, url) {
-    link.addEventListener("click", function(event) {
+    link.click(function (event) {
         chrome.tabs.create({'url': url});
     });
 }
 
-var issue = $("issue");
-var email = $("email");
-var source = $("source");
-var keySet = $("key_set");
+var issue = $("#issue");
+var email = $("#email");
+var source = $("#source");
+var keySet = $("#key_set");
+var score = $("#score");
 
 createLink(email, "mailto:ververcpp@gmail.com");
 createLink(source, "https://github.com/ververcpp/ChaZD");
 createLink(issue, "https://github.com/ververcpp/ChaZD/issues/new");
-createLink(keySet, "chrome://extensions/configureCommands")
+createLink(keySet, "chrome://extensions/configureCommands");
+createLink(score, "https://chrome.google.com/webstore/detail/chazd/nkiipedegbhbjmajlhpegcpcaacbfggp");
 
-var setting_button = $("setting_button");
-setting_button.addEventListener("click", function(event) {
+$("#setting_button").click(function (event) {
     //alert(JSON.stringify( $("settings").style));
-    this.classList.toggle("setting_button_clicked");
-    $("settings").classList.toggle("unshow");
-})
+    if ($("#settings").css("display") === "none") {
+        $("#settings").slideDown();
+    } else {
+        $("#settings").slideUp();
+    }
+});
 
-var mouseSelect = $("mouseSelect");
-var showPositionSide = $("showPositionSide");
-var showPositionNear = $("showPositionNear");
-var showDuration = $("showDuration");
-var currentDuration = $("currentDuration");
-var turnOffTips = $("turn_off_tips");
-var tips = $("tips");
+var mouseSelect = $("#mouseSelect");
+var useCtrl = $("#useCtrl");
+var showPositionSide = $("#showPositionSide");
+var showPositionNear = $("#showPositionNear");
+//var showDuration = $("showDuration");
+//var currentDuration = $("currentDuration");
+var turnOffTips = $("#turn_off_tips");
+var tips = $("#tips");
+var toggleKey = $("#toggle_key");
 
-chrome.storage.sync.get(null, function(items) { 
-    mouseSelect.checked = items["mouseSelect"];
+chrome.storage.sync.get(null, function (items) { 
+    if (items.selectMode === "mouseSelect") {
+        mouseSelect.attr("checked", true);
+        toggleKey.prop('disabled', 'disabled');
+    }
+    if (items.selectMode === "useCtrl") {
+        useCtrl.attr("checked",true);
+        toggleKey.prop('disabled', false);
+    }
     if (items.showTips) {
-        tips.classList.remove("unshow");
+        tips.removeClass("unshow");
     }
     if (items.showPosition === "side") {
-        showPositionSide.checked = true;
+        showPositionSide.attr("checked", true);
     } else if (items.showPosition === "near") {
-        showPositionNear.checked = true;
+        showPositionNear.attr("checked", true);
     }
-    currentDuration.innerHTML = showDuration.value = items["duration"];
+    if (items.toggleKey === "ctrl") {
+        toggleKey.get(0).selectedIndex = 0;
+    } else if (items.toggleKey === "alt") {
+        toggleKey.get(0).selectedIndex = 1;
+    } else if (items.toggleKey === "shift") {
+        toggleKey.get(0).selectedIndex = 2;
+    }
+    //currentDuration.innerHTML = showDuration.value = items["duration"];
 });
 
-turnOffTips.addEventListener("click", function(event) {
-    tips.classList.add("unshow");
-    updateSetting("showTips", false);
+turnOffTips.click(function (event) {
+    tips.addClass("unshow");
+    chrome.storage.sync.set({"showTips": false}, function() {
+        console.log("[ChaZD] Success update settings showTips = false");
+    });
 })
 
-mouseSelect.addEventListener("click", function(event) {
-    var isChecked = event.target.checked;
-    updateSetting("mouseSelect", isChecked);
+mouseSelect.click(function (event) {
+    toggleKey.prop('disabled', 'disabled');
+    chrome.storage.sync.set({"selectMode" : "mouseSelect"}, function() {
+        console.log("[ChaZD] Success update settings selectMode = mouseSelect");
+    });
 });
 
-showPositionSide.addEventListener("click", function(event) {
-    updateSetting("showPosition", "side");
+useCtrl.click(function (event) {
+    if (toggleKey.is(":disabled")) {
+        toggleKey.prop('disabled', false);
+    }
+    chrome.storage.sync.set({"selectMode" : "useCtrl"}, function() {
+        console.log("[ChaZD] Success update settings selectMode = useCtrl");
+    });
 });
 
-showPositionNear.addEventListener("click", function(event) {
-    updateSetting("showPosition", "near");
+showPositionSide.click(function (event) {
+    chrome.storage.sync.set({"showPosition" : "side"}, function() {
+        console.log("[ChaZD] Success update settings showPosition = side");
+    });
 });
 
-showDuration.addEventListener("click", function(event) {
-    currentDuration.innerHTML = event.target.value;
-    updateSetting("duration", event.target.value);  
-})
+showPositionNear.click(function (event) {
+    chrome.storage.sync.set({"showPosition" : "near"}, function() {
+        console.log("[ChaZD] Success update settings showPosition = near");
+    });
+});
+
+toggleKey.change(function (event) {
+    chrome.storage.sync.set({"toggleKey" : $(this).val()}, function() {
+        console.log("[ChaZD] Success update settings selectMode = mouseSelect");
+    });
+});
+
+// showDuration.addEventListener("click", function (event) {
+//     currentDuration.innerHTML = event.target.value;
+//     updateSetting("duration", event.target.value);  
+// })

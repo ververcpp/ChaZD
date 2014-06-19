@@ -1,4 +1,11 @@
-@import url(fonts/YDdict-Icon.css);
+@font-face {
+    font-family: "YDdict-Icon";
+    src: url("fonts/YDdict-Icon-font.eot");
+    src: url("fonts/YDdict-Icon-font.svg") format("svg"),
+         url("fonts/YDdict-Icon-font.woff") format("woff");
+    font-weight: normal;
+    font-style: normal;
+}
 
 body {
   margin: 0.5em;
@@ -46,7 +53,9 @@ ul {
 .query_button {
   display: block;
   height: 100%;
-  float: left;
+  position: absolute;
+  top:0;
+  left: 0;
   border: 0;
   border-radius: 1px; 
   margin: 0;
@@ -228,6 +237,14 @@ ul {
   margin-bottom: 5px;
 }
 
+.web_explains_list li .web_key {
+  font-weight: bold;
+}
+
+.web_explains_list li .web_value {
+  margin-left: 5px;
+}
+
 .tips_container {
   position: relative;
   padding: 5px;
@@ -276,20 +293,25 @@ footer img {
   right: 0;
 }
 
-.link{
+.link {
   cursor: pointer;
   text-decoration: none;
   color: rgba(0, 0, 0, 0.2);
   opacity: 0.5;
 }
 
-.link:hover{
+.link:hover {
   color: rgba(0, 0, 0, 1);
+}
+
+#score::after {
+  content: '\E80B';
+  -webkit-transition: color 0.2s linear;
+  transition: color 0.2s linear;
 }
 
 #email::after {
   content: '\E806';
-
   -webkit-transition: color 0.2s linear;
   transition : color 0.2s linear;
 }
@@ -341,6 +363,14 @@ footer img {
   margin-top: 5px;
 }
 
+.setting_block .top_menu {
+  margin-bottom: 5px;
+}
+
+.setting_block .sub_menu {
+  margin-top: 5px;
+}
+
 .setting_block label {
   margin-left: 5px;
 }
@@ -365,4 +395,20 @@ input[type="range"] {
   position: absolute;
   top: 25px;
   right: 0;
+}
+
+hr.carved {
+  clear: both; 
+  float: none; 
+  width: 100%; 
+  height: 2px;
+  line-height: 2px;
+  font-size: 0;
+  margin: 1.4em 0;
+  border: none 0; 
+  background: #ddd;
+  background-image: -webkit-gradient(linear,left top,left bottom,color-stop(0.5, rgb(221,221,221)),color-stop(0.5, rgb(255,255,255)));
+  background-image: -webkit-linear-gradient(center top,rgb(221,221,221) 50%,rgb(255,255,255) 50%);
+  background-image: -o-linear-gradient(center top,rgb(221,221,221) 50%,rgb(255,255,255) 50%);
+  background-image: -moz-linear-gradient(center top,rgb(221,221,221) 50%,rgb(255,255,255) 50%);
 }

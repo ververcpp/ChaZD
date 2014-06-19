@@ -6,59 +6,37 @@ function queryInPage(event) {
     var selection = window.getSelection();
     var selectText = trim(selection.toString());
     var selectRange = selection.getRangeAt(0).getBoundingClientRect();
-    if(selectText == "" || !(/[a-zA-Z\s]/.test(selectText))) return;
-    console.log("Selected Text at %s : %s", location.href, selectText);
+    if (selectText == "" || !(/[a-zA-Z\s]/.test(selectText))) return;
+    console.log("[ChaZD]Selected Text at %s : %s", location.href, selectText);
     var currentSettings = {};
-    chrome.storage.sync.get(null, function(items) {
+    chrome.storage.sync.get(null, function (items) {
         console.log("[Settings after select]");
-        for( var key in items) {
+        for ( var key in items) {
             currentSettings[key] = items[key];
             console.log("   %s : %s", key, currentSettings[key]);
         }
-        if(!currentSettings["mouseSelect"]) return;
-        var duration = currentSettings["duration"]
-        if(currentSettings["showPosition"] == "side") {
+        //var duration = currentSettings["duration"]
+        if (currentSettings["showPosition"] == "side") {
             //console.log("in 1");
-            showResultSide(selectText, duration);
+            showResultSide(selectText);
         }
-        if(currentSettings["showPosition"] == "near") {
+        if (currentSettings["showPosition"] == "near") {
             //console.log("in 2");
-            showResultNear(selectText, selectRange, duration, event);
+            showResultNear(selectText, selectRange, event);
         }
     });
 }
 
-function showResultSide(text, duration) {
-    if(isExist(text)) return;
-    var resultSideContainer = document.createElement("div");
-    resultSideContainer.setAttribute("class", "ChaZD_result_container");
-    resultSideContainer.setAttribute("data-text", text);
-    resultSideContainer.innerHTML = "ψ(._. )>划词君正在翻译。。。";
-    chrome.runtime.sendMessage({queryWord: text}, function(response) {
-        var resultObj = response;
-        resultSideContainer.innerHTML = "";
-        if(resultObj.validMessage === "query success") {
-            resultSideContainer.innerHTML += resultObj.titleBlock;
-            if(resultObj.basicBlock)
-                resultSideContainer.innerHTML += resultObj.basicBlock;
-            else {
-                var unableMessage = "╮(╯▽╰)╭划词君无能为力啊<br>复制给词典君试试吧↗"
-                resultSideContainer.innerHTML += unableMessage;
-            }
-        }
-    });
-    setTimeout(function(){
+function showResultSide(text) {
+    //if(isExist(text)) return;
+    var resultSideContainer = makeResultContainer(text);
+    //setTimeout(function () {
         resultSideList.appendChild(resultSideContainer);
-    }, 100);
-    
-    setTimeout(function(){
-        //resultSideContainer.classList.add("result_side_container_timeup");
-        resultSideList.removeChild(resultSideContainer);
-    }, 1000*duration);
+    //}, 100);
 }
 
-function showResultNear(text, range, duration, event) {
-    if(isExist(text)) return;
+function showResultNear(text, range, event) {
+    //if(isExist(text)) return;
     var showNearPosition = {};
     //文本框中选取的内容返回的left top 为0，此时采集鼠标的位置
     if (range.left === 0 && range.top === 0) {
@@ -68,19 +46,19 @@ function showResultNear(text, range, duration, event) {
     var left = range.left + document.body.scrollLeft;
     var top = range.top + document.body.scrollTop;
     var clientHeight = 0;
-    //
     clientHeight = (document.documentElement.clientHeight > document.body.clientHeight) ? document.body.clientHeight : document.documentElement.clientHeight;
-    console.log("clientHeight : " + clientHeight);
+    if (clientHeight === 0) {
+        clientHeight = document.documentElement.clientHeight;
+    }
+    console.log("[ChaZD]clientHeight : " + clientHeight);
     if (range.top >= 150) {
         var bottom = clientHeight - top;
         showNearPosition = { left: left, bottom: bottom };
     } else {
         showNearPosition = { left: left, top: top + range.height + 5 };
     }
-
-    var resultNearContainer = document.createElement("div");
-    resultNearContainer.setAttribute("class", "ChaZD_result_container");
-    resultNearContainer.setAttribute("data-text", text);
+    document.body.style.position = "static"; 
+    var resultNearContainer = makeResultContainer(text);
     resultNearContainer.style.position = "absolute";
     resultNearContainer.style.left = showNearPosition.left + "px";
     if (showNearPosition.bottom) {
@@ -89,26 +67,36 @@ function showResultNear(text, range, duration, event) {
     if (showNearPosition.top) {
         resultNearContainer.style.top = showNearPosition.top + "px";
     }
-    resultNearContainer.innerHTML = "ψ(._. )>划词君正在翻译。。。";
-    chrome.runtime.sendMessage({queryWord: text}, function(response) {
+    
+    document.body.appendChild(resultNearContainer);
+    // var t = setTimeout(function () {
+    //     document.body.removeChild(resultNearContainer);
+    // }, 1000 * duration);
+}
+
+function makeResultContainer(text) {
+    var resultContainer = document.createElement("div");
+    resultContainer.setAttribute("class", "ChaZD_result_container");
+    resultContainer.setAttribute("data-text", text);
+    resultContainer.innerHTML = "ψ(._. )>划词君正在翻译。。。";
+    chrome.runtime.sendMessage({queryWord: text}, function (response) {
         var resultObj = response;
-        resultNearContainer.innerHTML = "";
-        if(resultObj.validMessage === "query success") {
-            resultNearContainer.innerHTML += resultObj.titleBlock;
-            if(resultObj.basicBlock)
-                resultNearContainer.innerHTML += resultObj.basicBlock;
+        resultContainer.innerHTML = "";
+        if (resultObj.validMessage === "query success") {
+            resultContainer.innerHTML += resultObj.titleBlock;
+            if (resultObj.basicBlock)
+                resultContainer.innerHTML += resultObj.basicBlock;
+            else if (resultObj.haveTranslation) {
+                resultContainer.getElementsByClassName("title_translation")[0].style.display = "block";
+            } 
             else {
                 var unableMessage = "╮(╯▽╰)╭划词君无能为力啊<br>复制给词典君试试吧↗"
-                resultNearContainer.innerHTML += unableMessage;
+                resultContainer.innerHTML += unableMessage;
             }
         }
     });
-    setTimeout(function() {
-        document.body.appendChild(resultNearContainer);
-    }, 100);
-    setTimeout(function() {
-        document.body.removeChild(resultNearContainer);
-    }, 1000 * duration);
+
+    return resultContainer;
 }
 
 function isExist(text) {
@@ -123,6 +111,65 @@ function isExist(text) {
     return false;
 }   
 
+var useCtrl = true;
+var toggleKey = "ctrl";
+chrome.storage.sync.get(null, function (items) {
+    useCtrl = (items["selectMode"] === "useCtrl") ? true : false;
+    toggleKey = items["toggleKey"];
+});
 
-document.body.addEventListener("mouseup", queryInPage);
+chrome.storage.onChanged.addListener(function (changes) {
+    for (var key in changes) {
+        console.log("[ChaZD]Settings Update, [%s] %s => %s", key, changes[key].oldValue, changes[key].newValue);
+    }
+    if (changes["selectMode"] !== undefined) {
+        var selectMode = changes["selectMode"].newValue;
+        useCtrl = (selectMode === "useCtrl") ? true : false;
+    }
+    if (changes["toggleKey"] !== undefined) {
+        toggleKey = changes["toggleKey"].newValue; 
+    }
+});
+
+var classNameCollection = ["ChaZD_result_container", "title_container", "title_word", "title_translation", "basic_container", ".explains_container", ".explains_list", "property_container", "explains_item"];
+
+document.addEventListener("mousedown", function (event) {
+    for (var name in classNameCollection) {
+        if (event.target.classList.contains(classNameCollection[name])) {
+            //console.log("[ChaZD] don't remove");
+            return;
+        }
+    }
+    var existResult = document.getElementsByClassName("ChaZD_result_container");
+    for (var i = 0 ; i < existResult.length; i++) {
+        existResult[i].parentNode.removeChild(existResult[i]);
+    }
+});
+
+document.addEventListener("mouseup", function (event) {
+    //console.log("[ChaZD] current useCtrl: " + useCtrl);
+    if (useCtrl) {
+        //console.log("current togglekey: " + toggleKey);
+        if (toggleKey === "ctrl") {
+            //console.log("[ChaZD] In Ctrl");
+            if (!event.ctrlKey && !event.metaKey) {
+                //console.log("[ChaZD] Aho~~~");
+                return;
+            }
+        } else if (toggleKey === "alt") {
+            //console.log("[ChaZD] In Alt");
+            if (!event.altKey) {
+                //console.log("[ChaZD] Aho~~~");
+                return;
+            } 
+        } else if (toggleKey === "shift") {
+            //console.log("[ChaZD] In Shift");
+            if (!event.shiftKey) {
+                //console.log("[ChaZD] Aho~~~");
+                return;
+            }
+        }
+    }
+    queryInPage(event);
+});
 

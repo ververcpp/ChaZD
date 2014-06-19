@@ -14,37 +14,44 @@
 .ChaZD_result_container {
     width: 250px;
     background-color: #ffdb70;
+    text-align: left;
+    color:  rgba(0, 0, 0, 1);
     padding: 5px;
     margin: 2px; 
     opacity: 0.9;
     border: 1px solid rgba(209, 209, 209, 1);
     border-radius: 2px;
     z-index: 99999999;
+    font-size: 14px;
 }
 
 .ChaZD_result_container .title_container {
     color: rgba(41, 94, 255, 1);
-    display: flex;
-    max-width: 100%;
-    font-size: 18px;
-    margin-bottom: 10px;
+    display: block;
+    max-width: 100%;    
 }
 
 .ChaZD_result_container .title_container .title_word {
     position: relative;
     max-width: 100%;
     text-align: left;
+    font-size: 18px;
 }
 
 .ChaZD_result_container .title_container .title_translation {
     display: none;
+    color: rgba(0, 0, 0, 1);
+    margin-top: 10px;
 }
 
 /*Result Block -- basic container*/
 .ChaZD_result_container .basic_container {
-    
+    margin-top: 10px;
 }
 
+.ChaZD_result_container .unshow {
+    display: none;
+}
 /*Result Block -- basic container -- phonetic container*/
 .ChaZD_result_container .phonetic_container {
     display: none;

@@ -9,9 +9,10 @@ var urls = {
 };
 
 var settings = {
-    mouseSelect : true,     //是否启用划词翻译
+    selectMode : "mouseSelect",     //划词的形式：直接划词 | Ctrl+划词
     showPosition : "side",   //划词翻译结果显示的位置
-    duration : 5,           //翻译结果显示的时间
+    //duration : 5,           //翻译结果显示的时间
+    toggleKey : "ctrl",
     showTips : true         //是否显示Tips
 }
 
@@ -33,37 +34,13 @@ var frames = {
     //basic explain frame
     explainsContainer : "<div class=\"explains_container\">#{1}</div>",
     explainsList : "<ul class=\"explains_list\">#{1}</ul>",
-    explain : "<li>#{1}#{2}</li>",
+    explain : "<li class=\"explains_item\">#{1}#{2}</li>",
     propertyContainer : "<b class=\"property_container\" title=\"#{1}\">#{2}</b>",
 
     //web explain frame
     webExplainsContainer : "<div class=\"web_explains_container\"><div class=\"web_title\">网络释义及短语</div>#{1}</div>",
     webEplainsList : "<ul class=\"web_explains_list\">#{1}</ul>",
-    webEplain : "<li>#{1}</li>"
-}
-
-chrome.storage.sync.get(null,function(items) {
-    //console.log(JSON.stringify(items));
-    if (items["mouseSelect"] === undefined ) {
-        console.log("storage 是空的");
-        chrome.storage.sync.set(settings);
-    } else {
-        console.log("[Current Settings]")
-        for(var key in items){
-            settings[key] = items[key];
-            console.log("   %s : %s", key, settings[key]);
-        }
-    }
-});
-
-chrome.storage.onChanged.addListener(function(changes) {
-    for (var key in changes) {
-        console.log("Settings Update, [%s] %s => %s", key, changes[key].oldValue, changes[key].newValue);
-    }
-});
-
-function $(id) {
-    return document.getElementById(id)
+    webEplain : "<li><span class=\"web_key\">#{1}</span><span class=\"web_value\">#{2}</span></li>"
 }
 
 //判断一个初始化后的对象是否为空
@@ -74,21 +51,14 @@ function isEmpty(obj) {
     return true;
 }
 
-function updateSetting(key, newValue) {
-    //this.key = key;
-    console.log("Set %s value to '%s'", key, newValue);
-    settings[key] = newValue;
-    chrome.storage.sync.set(settings);
-}
-
 /*
  * 文本模板函数fmt, @greatghoul
  * 参考TransIt。
  */
 function fmt() {
     var args = arguments;
-    return args[0].replace(/#{(.*?)}/g, function(match, prop) {
-        return function(obj, props) {
+    return args[0].replace(/#{(.*?)}/g, function (match, prop) {
+        return function (obj, props) {
             var prop = /\d+/.test(props[0]) ? parseInt(props[0]) : props[0];
             if (props.length > 1) {
                 return arguments.callee(obj[prop], props.slice(1));
