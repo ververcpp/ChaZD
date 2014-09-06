@@ -1,0 +1,161 @@
+$font-family : "Helvetica Neue", Helvetica, Arial, sans-serif;
+$background-color : rgba(255, 253, 250, 1);
+$border-color : rgba(163, 196, 110, 1);
+$text-color : rgba(15, 15, 15, 1);
+$font-size : 14px;
+$gap: 10px;
+
+@mixin box-shadow($horizontal, $vertical, $radius, $color) {
+    box-shadow: $horizontal $vertical $radius $color;
+    -webkit-box-shadow: $horizontal $vertical $radius $color;
+}
+
+.ChaZD_result_side_list {
+    position: fixed;
+    right: 10px;
+    top: 5px;
+    margin: 0;
+    padding: 0;
+    width: 250px;
+    z-index: 9999999;
+    text-align: left;
+    font-family: $font-family;
+    font-size: $font-size;
+}
+
+.ChaZD_result_container {
+    width: 250px;
+    background-color: $background-color;
+    text-align: left;
+    color:  $text-color;
+    padding: 10px;
+    margin: 0px; 
+    opacity: 1;
+    border: 2px solid $border-color;
+    border-radius: 10px;
+    z-index: 9999999;
+    font-family: $font-family;
+    font-size: $font-size;
+    line-height: 1.5;
+    @include box-shadow(2px, 2px, 2px, #C4C4C4);
+
+    .title_container {
+        background-color: $background-color;
+        border: none;
+        color: $text-color;
+        display: block;
+        max-width: 100%;
+
+        .title_word {
+            position: relative;
+            max-width: 100%;
+            text-align: left;
+            font-size: $font-size + 4px;
+        }
+
+        .title_translation {
+            display: none;
+            color: $text-color;
+            margin-top: $gap;
+        }
+    }
+
+    .basic_container {
+        background-color: $background-color;
+        border: none;
+        margin-top: $gap;
+
+        .phonetic_container {
+            //display: none;
+            div {
+                display: inline-block;
+                color: red;
+                margin-right: 5px;
+            }
+
+            .uk_phonetic_container:before {
+                content: '英';
+                color: $text-color;
+                font-size: $font-size - 2px;
+                margin-right: 2px;
+            }
+
+            .us_phonetic_container:before {
+                content: '美';
+                color: $text-color;
+                font-size: $font-size - 2px;
+                margin-right: 2px;
+            }
+
+        }
+
+        .explains_container {
+            font-size: $font-size;
+            margin-top: $gap;
+
+            /*Result Block -- basic container -- explains container*/
+            .explains_list {
+                list-style: none;
+                margin: 0;
+                padding: 0;
+
+                li {
+                    &:before {
+                        display: none;
+                    }
+                    padding: 0px;
+                    font-family: $font-family;
+                    margin-bottom: $gap / 2;
+                    list-style: none;
+                    font-size: $font-size;
+                }
+            }
+
+            .property_container {
+                font-weight: bold;
+                color: $text-color;
+                margin-right: 5px;
+            }
+
+            .voice_container {
+                display: none;
+            }
+        }
+    }
+    
+    .web_explains_container {
+
+        .web_title {
+            font-weight: bold;
+            opacity: 0.7;
+        }
+
+        ul {
+            list-style: none;
+    
+            li {
+                .web_value {
+                    margin-left: 5px;
+                }
+            }
+        }
+    }
+
+    .unshow {
+        display: none;
+    }
+}
+
+/*
+.ChaZD_result_container .voice_container::after {
+  content: '\E803';
+  font-family: "YDdict-Icon";
+  
+  -webkit-transition: color 0.2s linear;
+  transition : color 0.2s linear;
+}  
+
+.ChaZD_result_container .voice_container:hover {
+  color: rgba(119, 110, 101, 1);
+}
+*/

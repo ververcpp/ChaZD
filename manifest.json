@@ -2,7 +2,7 @@
   "manifest_version": 2,
 
   "name": "ChaZD",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "description": "ChaZD 查字典，简洁易用的英汉字典扩展程序，支持划词哦:)",
 
   "permissions": [
@@ -22,7 +22,7 @@
   "content_scripts": [ {
     "all_frames": true,
     "css": ["style/inPage.css"],
-    "js": ["utility.js", "selection.js"],
+    "js": ["jquery.min.js", "utility.js", "selection.js"],
     "matches": ["<all_urls>"]
       
   } ],

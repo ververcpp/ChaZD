@@ -9,7 +9,7 @@ ChaZD 查字典，简洁易用的英汉字典扩展程序，支持划词哦:)
 **注**：安装扩展后，第一次使用请刷新要查词的页面，划词功能才会生效。
 
 
-主要功能（ver 0.6.0）
+主要功能
 --------------------
 + 支持在线英汉互译
 + 提供英文单词和语句的英音、美音真人发音朗读
@@ -19,6 +19,13 @@ ChaZD 查字典，简洁易用的英汉字典扩展程序，支持划词哦:)
 
 更新日志
 -------
+###ver 0.8.0
++ 全新划词窗口显示
++ 划词结果新增音标显示
++ 针对没有词典翻译，但有网络释义的词汇在划词中显示结果
++ 划词窗口代码结合jQuery
++ 修改划词结果显示字体、行距等bug
+
 ###ver 0.7.0
 + 增加组合键+划词功能，可选择按键包括(Ctrl/Command || Alt || Shift)
 + 优化了词组、短句的翻译结果
@@ -31,7 +38,7 @@ ChaZD 查字典，简洁易用的英汉字典扩展程序，支持划词哦:)
 截图
 -----------
 ![Screenshoot 1](/screenshoot/screenshoot1.jpg)  
-![Screenshoot 2](/screenshoot/screenshoot2.jpg)
+![Screenshoot 2](/screenshoot/screenshoot3.png)
 
 部分功能设计借鉴于[TransIt](https://github.com/GDG-Xian/crx-transit)
 

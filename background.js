@@ -52,17 +52,19 @@ ChaZD.prototype.parseResult = function (responseText) {
     var result = JSON.parse(responseText);
     var resultObj = {};
     var validResult = this.checkErrorCode(result["errorCode"]);
+    resultObj.haveWebTranslation = false;
     if (!validResult["error"]) {
         var title = this.initTitle(result);
         resultObj.titleBlock = title.titleBlock;
         resultObj.haveTranslation = title.haveTranslation;
         if (result["basic"] !== undefined) {
             var basicBlock = this.parseBasicResult(result);
-            resultObj.basicBlock = basicBlock
+            resultObj.basicBlock = basicBlock;
         }
 
         if (result["web"] !== undefined) {
             var webBlock = this.parseWebResult(result);
+            resultObj.haveWebTranslation = true;
             resultObj.webBlock = webBlock;
         }
     }
@@ -250,8 +252,8 @@ chrome.runtime.onInstalled.addListener(
             console.log("[ChaZD] update from version " + details.previousVersion);
             //alert("New version has updated!");
             showNotification({
-                title : "ChaZD 更新到0.7.0版啦！",
-                content : "新版本的ChaZD增加组合键划词翻译功能，并修改了划词结果的显示模式，更符合用户的使用习惯。" + 
+                title : "ChaZD 更新到0.8.0版啦！",
+                content : "全新的划词结果窗口，界面更清新！划词君更给力，新增音标显示，带有网络释义的词汇也可以显示结果啦。" + 
                     "更多内容可以点击详情查看。期待您的建议:)"
             })
         }

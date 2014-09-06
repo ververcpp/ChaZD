@@ -1,6 +1,9 @@
-var resultSideList = document.createElement("div");
-resultSideList.setAttribute("class", "ChaZD_result_side_list");
-document.body.appendChild(resultSideList);
+//var resultSideList = document.createElement("div");
+var $resultSideList = $("<div></div>");
+$resultSideList.addClass('ChaZD_result_side_list');
+//resultSideList.setAttribute("class", "ChaZD_result_side_list");
+//document.body.appendChild(resultSideList);
+$("body").append($resultSideList);
 
 function queryInPage(event) {
     var selection = window.getSelection();
@@ -9,9 +12,9 @@ function queryInPage(event) {
     if (selectText == "" || !(/[a-zA-Z\s]/.test(selectText))) return;
     console.log("[ChaZD]Selected Text at %s : %s", location.href, selectText);
     var currentSettings = {};
-    chrome.storage.sync.get(null, function (items) {
+    chrome.storage.sync.get(null, function(items) {
         console.log("[Settings after select]");
-        for ( var key in items) {
+        for (var key in items) {
             currentSettings[key] = items[key];
             console.log("   %s : %s", key, currentSettings[key]);
         }
@@ -29,9 +32,9 @@ function queryInPage(event) {
 
 function showResultSide(text) {
     //if(isExist(text)) return;
-    var resultSideContainer = makeResultContainer(text);
+    var $resultSideContainer = makeResultContainer(text);
     //setTimeout(function () {
-        resultSideList.appendChild(resultSideContainer);
+    $resultSideList.append($resultSideContainer);
     //}, 100);
 }
 
@@ -40,7 +43,11 @@ function showResultNear(text, range, event) {
     var showNearPosition = {};
     //文本框中选取的内容返回的left top 为0，此时采集鼠标的位置
     if (range.left === 0 && range.top === 0) {
-        range = { left: event.clientX, top: event.clientY, height: 15};
+        range = {
+            left: event.clientX,
+            top: event.clientY,
+            height: 15
+        };
     }
 
     var left = range.left + document.body.scrollLeft;
@@ -53,12 +60,19 @@ function showResultNear(text, range, event) {
     console.log("[ChaZD]clientHeight : " + clientHeight);
     if (range.top >= 150) {
         var bottom = clientHeight - top;
-        showNearPosition = { left: left, bottom: bottom };
+        showNearPosition = {
+            left: left,
+            bottom: bottom
+        };
     } else {
-        showNearPosition = { left: left, top: top + range.height + 5 };
+        showNearPosition = {
+            left: left,
+            top: top + range.height + 5
+        };
     }
-    document.body.style.position = "static"; 
-    var resultNearContainer = makeResultContainer(text);
+    document.body.style.position = "static";
+    var $resultNearContainer = makeResultContainer(text);
+    resultNearContainer = $resultNearContainer[0];
     resultNearContainer.style.position = "absolute";
     resultNearContainer.style.left = showNearPosition.left + "px";
     if (showNearPosition.bottom) {
@@ -67,58 +81,61 @@ function showResultNear(text, range, event) {
     if (showNearPosition.top) {
         resultNearContainer.style.top = showNearPosition.top + "px";
     }
-    
-    document.body.appendChild(resultNearContainer);
+
+    $("body").append($resultNearContainer.fadeIn(400));
     // var t = setTimeout(function () {
-    //     document.body.removeChild(resultNearContainer);
+    //     document.body.removeChild($resultNearContainer);
     // }, 1000 * duration);
 }
 
 function makeResultContainer(text) {
-    var resultContainer = document.createElement("div");
-    resultContainer.setAttribute("class", "ChaZD_result_container");
-    resultContainer.setAttribute("data-text", text);
-    resultContainer.innerHTML = "ψ(._. )>划词君正在翻译。。。";
-    chrome.runtime.sendMessage({queryWord: text}, function (response) {
+    var $resultContainer = $("<div></div>");
+    $resultContainer.addClass("ChaZD_result_container");
+    $resultContainer.attr("data-text", text);
+    $resultContainer.text("ψ(._. )>划词君正在翻译。。。");
+    chrome.runtime.sendMessage({
+        queryWord: text
+    }, function(response) {
         var resultObj = response;
-        resultContainer.innerHTML = "";
+        $resultContainer.html("");
         if (resultObj.validMessage === "query success") {
-            resultContainer.innerHTML += resultObj.titleBlock;
+            $resultContainer.append(resultObj.titleBlock);
             if (resultObj.basicBlock)
-                resultContainer.innerHTML += resultObj.basicBlock;
+                $resultContainer.append(resultObj.basicBlock);
             else if (resultObj.haveTranslation) {
-                resultContainer.getElementsByClassName("title_translation")[0].style.display = "block";
-            } 
-            else {
-                var unableMessage = "╮(╯▽╰)╭划词君无能为力啊<br>复制给词典君试试吧↗"
-                resultContainer.innerHTML += unableMessage;
+                $resultContainer.children(".title_container").children(".title_translation").css("display", "block");
+            } else if (resultObj.haveWebTranslation) {
+                $resultContainer.append(resultObj.webBlock);
+                $resultContainer.children(".web_explains_container").children(".web_title").text("网络释义");
+            } else {
+                $resultContainer.append("╮(╯▽╰)╭划词君无能为力啊<br>复制给词典君试试吧↗");
             }
         }
     });
 
-    return resultContainer;
+    return $resultContainer;
 }
 
-function isExist(text) {
-    var resultContainerCollection = document.getElementsByClassName("ChaZD_result_container"); 
-    var length = resultContainerCollection.length;
-    if (length !== 0) {
-        for (var i = 0; i < length; i++) {
-            if (resultContainerCollection[i].getAttribute("data-text") === text)
-                return true;
-        }    
-    }
-    return false;
-}   
+// function isExist(text) {
+//     var resultContainerCollection = document.getElementsByClassName("ChaZD_result_container");
+//     var length = resultContainerCollection.length;
+//     if (length !== 0) {
+//         for (var i = 0; i < length; i++) {
+//             if (resultContainerCollection[i].getAttribute("data-text") === text)
+//                 return true;
+//         }
+//     }
+//     return false;
+// }
 
 var useCtrl = true;
 var toggleKey = "ctrl";
-chrome.storage.sync.get(null, function (items) {
+chrome.storage.sync.get(null, function(items) {
     useCtrl = (items["selectMode"] === "useCtrl") ? true : false;
     toggleKey = items["toggleKey"];
 });
 
-chrome.storage.onChanged.addListener(function (changes) {
+chrome.storage.onChanged.addListener(function(changes) {
     for (var key in changes) {
         console.log("[ChaZD]Settings Update, [%s] %s => %s", key, changes[key].oldValue, changes[key].newValue);
     }
@@ -127,13 +144,13 @@ chrome.storage.onChanged.addListener(function (changes) {
         useCtrl = (selectMode === "useCtrl") ? true : false;
     }
     if (changes["toggleKey"] !== undefined) {
-        toggleKey = changes["toggleKey"].newValue; 
+        toggleKey = changes["toggleKey"].newValue;
     }
 });
 
 var classNameCollection = ["ChaZD_result_container", "title_container", "title_word", "title_translation", "basic_container", ".explains_container", ".explains_list", "property_container", "explains_item"];
 
-document.addEventListener("mousedown", function (event) {
+$(document).bind("mousedown", function(event) {
     for (var name in classNameCollection) {
         if (event.target.classList.contains(classNameCollection[name])) {
             //console.log("[ChaZD] don't remove");
@@ -141,12 +158,12 @@ document.addEventListener("mousedown", function (event) {
         }
     }
     var existResult = document.getElementsByClassName("ChaZD_result_container");
-    for (var i = 0 ; i < existResult.length; i++) {
+    for (var i = 0; i < existResult.length; i++) {
         existResult[i].parentNode.removeChild(existResult[i]);
     }
 });
 
-document.addEventListener("mouseup", function (event) {
+$(document).bind("mouseup", function(event) {
     //console.log("[ChaZD] current useCtrl: " + useCtrl);
     if (useCtrl) {
         //console.log("current togglekey: " + toggleKey);
@@ -161,7 +178,7 @@ document.addEventListener("mouseup", function (event) {
             if (!event.altKey) {
                 //console.log("[ChaZD] Aho~~~");
                 return;
-            } 
+            }
         } else if (toggleKey === "shift") {
             //console.log("[ChaZD] In Shift");
             if (!event.shiftKey) {
@@ -172,4 +189,3 @@ document.addEventListener("mouseup", function (event) {
     }
     queryInPage(event);
 });
-

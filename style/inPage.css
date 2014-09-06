@@ -1,61 +1,96 @@
+@charset "UTF-8";
 .ChaZD_result_side_list {
-    position: fixed;
-    right: 5px;
-    top: 5px;
-    margin: 0;
-    padding: 0;
-    width: 250px;
-    z-index: 99999999;
-    text-align: left;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    font-size: 14px;
-}
+  position: fixed;
+  right: 10px;
+  top: 5px;
+  margin: 0;
+  padding: 0;
+  width: 250px;
+  z-index: 9999999;
+  text-align: left;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 14px; }
 
 .ChaZD_result_container {
-    width: 250px;
-    background-color: #ffdb70;
-    text-align: left;
-    color:  rgba(0, 0, 0, 1);
-    padding: 5px;
-    margin: 2px; 
-    opacity: 0.9;
-    border: 1px solid rgba(209, 209, 209, 1);
-    border-radius: 2px;
-    z-index: 99999999;
-    font-size: 14px;
-}
-
-.ChaZD_result_container .title_container {
-    color: rgba(41, 94, 255, 1);
+  width: 250px;
+  background-color: #fffdfa;
+  text-align: left;
+  color: #0f0f0f;
+  padding: 10px;
+  margin: 0px;
+  opacity: 1;
+  border: 2px solid #a3c46e;
+  border-radius: 10px;
+  z-index: 9999999;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  box-shadow: 2px 2px 2px #C4C4C4;
+  -webkit-box-shadow: 2px 2px 2px #C4C4C4; }
+  .ChaZD_result_container .title_container {
+    background-color: #fffdfa;
+    border: none;
+    color: #0f0f0f;
     display: block;
-    max-width: 100%;    
-}
-
-.ChaZD_result_container .title_container .title_word {
-    position: relative;
-    max-width: 100%;
-    text-align: left;
-    font-size: 18px;
-}
-
-.ChaZD_result_container .title_container .title_translation {
-    display: none;
-    color: rgba(0, 0, 0, 1);
-    margin-top: 10px;
-}
-
-/*Result Block -- basic container*/
-.ChaZD_result_container .basic_container {
-    margin-top: 10px;
-}
-
-.ChaZD_result_container .unshow {
-    display: none;
-}
-/*Result Block -- basic container -- phonetic container*/
-.ChaZD_result_container .phonetic_container {
-    display: none;
-}
+    max-width: 100%; }
+    .ChaZD_result_container .title_container .title_word {
+      position: relative;
+      max-width: 100%;
+      text-align: left;
+      font-size: 18px; }
+    .ChaZD_result_container .title_container .title_translation {
+      display: none;
+      color: #0f0f0f;
+      margin-top: 10px; }
+  .ChaZD_result_container .basic_container {
+    background-color: #fffdfa;
+    border: none;
+    margin-top: 10px; }
+    .ChaZD_result_container .basic_container .phonetic_container div {
+      display: inline-block;
+      color: red;
+      margin-right: 5px; }
+    .ChaZD_result_container .basic_container .phonetic_container .uk_phonetic_container:before {
+      content: '英';
+      color: #0f0f0f;
+      font-size: 12px;
+      margin-right: 2px; }
+    .ChaZD_result_container .basic_container .phonetic_container .us_phonetic_container:before {
+      content: '美';
+      color: #0f0f0f;
+      font-size: 12px;
+      margin-right: 2px; }
+    .ChaZD_result_container .basic_container .explains_container {
+      font-size: 14px;
+      margin-top: 10px;
+      /*Result Block -- basic container -- explains container*/ }
+      .ChaZD_result_container .basic_container .explains_container .explains_list {
+        list-style: none;
+        margin: 0;
+        padding: 0; }
+        .ChaZD_result_container .basic_container .explains_container .explains_list li {
+          padding: 0px;
+          font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+          margin-bottom: 5px;
+          list-style: none;
+          font-size: 14px; }
+          .ChaZD_result_container .basic_container .explains_container .explains_list li:before {
+            display: none; }
+      .ChaZD_result_container .basic_container .explains_container .property_container {
+        font-weight: bold;
+        color: #0f0f0f;
+        margin-right: 5px; }
+      .ChaZD_result_container .basic_container .explains_container .voice_container {
+        display: none; }
+  .ChaZD_result_container .web_explains_container .web_title {
+    font-weight: bold;
+    opacity: 0.7; }
+  .ChaZD_result_container .web_explains_container ul {
+    list-style: none; }
+    .ChaZD_result_container .web_explains_container ul li .web_value {
+      margin-left: 5px; }
+  .ChaZD_result_container .unshow {
+    display: none; }
 
 /*
 .ChaZD_result_container .voice_container::after {
@@ -71,26 +106,4 @@
 }
 */
 
-/*Result Block -- basic container -- explains container*/
-.ChaZD_result_container .explains_container {
-    font-size: 14px;
-    margin-top: 10px;
-}
-
-.ChaZD_result_container .explains_list {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-}
-
-.ChaZD_result_container .explains_list li {
-    margin-bottom: 5px;
-}
-
-.ChaZD_result_container .property_container {
-    margin-right: 5px;  
-}
-
-.ChaZD_result_container .voice_container {
-    display: none;
-}
+/*# sourceMappingURL=inPage.css.map */
