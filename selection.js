@@ -4,12 +4,14 @@ $resultSideList.addClass('ChaZD_result_side_list');
 //resultSideList.setAttribute("class", "ChaZD_result_side_list");
 //document.body.appendChild(resultSideList);
 $("body").append($resultSideList);
-
+var selectText_old="";
 function queryInPage(event) {
     var selection = window.getSelection();
     var selectText = trim(selection.toString());
     var selectRange = selection.getRangeAt(0).getBoundingClientRect();
     if (selectText == "" || !(/[a-zA-Z\s]/.test(selectText))) return;
+    if(selectText == selectText_old) return;
+    selectText_old = selectText;
     console.log("[ChaZD]Selected Text at %s : %s", location.href, selectText);
     var currentSettings = {};
     chrome.storage.sync.get(null, function(items) {
@@ -188,4 +190,11 @@ $(document).bind("mouseup", function(event) {
         }
     }
     queryInPage(event);
+});
+
+
+$(document).bind("selectstart", function(event) {
+    setTimeout(function(){
+        queryInPage(event);
+    },100);
 });
