@@ -19,6 +19,11 @@ ChaZD 查字典，简洁易用的英汉字典扩展程序，支持划词哦:)
 
 更新日志
 -------
+###ver 0.8.3
++ 修改若干个BUG
++ 新的划词显示窗口
++ 划词支持发音功能
+
 ###ver 0.8.0
 + 全新划词窗口显示
 + 划词结果新增音标显示
@@ -38,7 +43,7 @@ ChaZD 查字典，简洁易用的英汉字典扩展程序，支持划词哦:)
 截图
 -----------
 ![Screenshoot 1](/screenshoot/screenshoot1.jpg)  
-![Screenshoot 2](/screenshoot/screenshoot3.png)
+![Screenshoot 2](/screenshoot/screenshoot4.png)
 
 部分功能设计借鉴于[TransIt](https://github.com/GDG-Xian/crx-transit)
 

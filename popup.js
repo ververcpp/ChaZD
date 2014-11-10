@@ -1,10 +1,10 @@
 var $button = $("#search");
 var $tipsContainer = $("#tips");
-var $input = $("#query_word");
-var $queryResultContainer = $("#query_result");
+var $input = $("#query-word");
+var $queryResultContainer = $("#query-result");
 
 if (-1 !== window.navigator.platform.toLowerCase().indexOf("mac")) {
-    $("#ctrl_option").html("Command");
+    $("#ctrl-option").html("Command");
 }
 
 function queryInPopup() {
@@ -28,10 +28,10 @@ function queryInPopup() {
                 resultBlock += resultObj.webBlock;
             }
             $queryResultContainer.html(resultBlock);
-            var voiceCollection = $(".voice_container");
+            var voiceCollection = $(".voice-container");
             //console.log("voiceCollection length: " + voiceCollection.length);
             voiceCollection.each(function(index, el) {
-                var src = $(this).attr('data-src');
+                var src = $(this).attr("data-src");
                 //console.log(src);
                 var audioBlock = document.createElement("audio");
                 audioBlock.setAttribute("src", src);
@@ -44,7 +44,7 @@ function queryInPopup() {
                 })
             });
         } else {
-            $queryResultContainer.html(resultObj.validMessage + "<br>词典君崩溃了（┬_┬）");
+            $queryResultContainer.html(resultObj.validMessage + "<br>词典君崩溃了（┬-┬）");
         }
     });
 }
@@ -69,7 +69,7 @@ function createLink(link, url) {
 var issue = $("#issue");
 var email = $("#email");
 var source = $("#source");
-var keySet = $("#key_set");
+var keySet = $("#key-set");
 var score = $("#score");
 
 createLink(email, "mailto:ververcpp@gmail.com");
@@ -78,7 +78,7 @@ createLink(issue, "https://github.com/ververcpp/ChaZD/issues/new");
 createLink(keySet, "chrome://extensions/configureCommands");
 createLink(score, "https://chrome.google.com/webstore/detail/chazd/nkiipedegbhbjmajlhpegcpcaacbfggp");
 
-$("#setting_button").click(function (event) {
+$("#setting-button").click(function (event) {
     //alert(JSON.stringify( $("settings").style));
     if ($("#settings").css("display") === "none") {
         $("#settings").slideDown();
@@ -93,9 +93,9 @@ var showPositionSide = $("#showPositionSide");
 var showPositionNear = $("#showPositionNear");
 //var showDuration = $("showDuration");
 //var currentDuration = $("currentDuration");
-var turnOffTips = $("#turn_off_tips");
+var turnOffTips = $("#turn-off-tips");
 var tips = $("#tips");
-var toggleKey = $("#toggle_key");
+var toggleKey = $("#toggle-key");
 
 chrome.storage.sync.get(null, function (items) { 
     if (items.selectMode === "mouseSelect") {

@@ -1,7 +1,7 @@
 $font-family : "Helvetica Neue", Helvetica, Arial, sans-serif;
-$background-color : rgba(255, 253, 250, 1);
-$border-color : rgba(163, 196, 110, 1);
-$text-color : rgba(15, 15, 15, 1);
+$background-color : rgba(255, 255, 221, 1);
+$border-color : rgba(153, 153, 153, 1);
+$text-color : rgba(34, 34, 34, 1);
 $font-size : 14px;
 $gap: 10px;
 
@@ -10,62 +10,79 @@ $gap: 10px;
     -webkit-box-shadow: $horizontal $vertical $radius $color;
 }
 
-.ChaZD_result_side_list {
-    position: fixed;
+.ChaZD-result-side {
+    position: fixed !important; 
     right: 10px;
     top: 5px;
-    margin: 0;
-    padding: 0;
-    width: 250px;
-    z-index: 9999999;
-    text-align: left;
-    font-family: $font-family;
-    font-size: $font-size;
 }
 
-.ChaZD_result_container {
+.ChaZD-result-container {
     width: 250px;
+    overflow: auto;
+    text-shadow: none;
     background-color: $background-color;
     text-align: left;
     color:  $text-color;
     padding: 10px;
     margin: 0px; 
     opacity: 1;
-    border: 2px solid $border-color;
-    border-radius: 10px;
-    z-index: 9999999;
+    border: 1px solid $border-color;
+    border-radius: 4px;
+    z-index: 999997;
     font-family: $font-family;
     font-size: $font-size;
-    line-height: 1.5;
-    @include box-shadow(2px, 2px, 2px, #C4C4C4);
+    position: absolute;
+    line-height: normal;
+    @include box-shadow(0px, 0px, 20px,rgba(0, 0, 0, 0.5));
 
-    .title_container {
+    #ChaZD-searching {
+        border: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .title-container {
         background-color: $background-color;
         border: none;
         color: $text-color;
         display: block;
         max-width: 100%;
 
-        .title_word {
+        .title-word {
             position: relative;
             max-width: 100%;
             text-align: left;
             font-size: $font-size + 4px;
+
+            .voice-container {
+                background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAcUlEQVQ4y2P4//8/AyUYQhAH3gNxA7IAIQPmo/H3g/QA8XkgFiBkwHyoYnRQABVfj88AmGZcTuuHyjlgMwBZM7IE3NlQGhQe65EN+I8Dw8MLGgYoFpFqADK/YUAMwOsFigORatFIlYRElaRMWmaiBAMAp0n+3U0kqkAAAAAASUVORK5CYII=");
+                background-position: bottom center;
+                background-repeat: no-repeat;
+                cursor: pointer;
+                opacity: 0.5;
+                width: 16px;
+                height: 16px;
+                margin-left: 8px;
+                display: inline-block;
+                position: relative;
+                top: 2px;
+            }
         }
 
-        .title_translation {
+        .title-translation {
             display: none;
             color: $text-color;
             margin-top: $gap;
         }
     }
 
-    .basic_container {
+    .basic-container {
         background-color: $background-color;
         border: none;
-        margin-top: $gap;
+        //margin-top: $gap;
 
-        .phonetic_container {
+        .phonetic-container {
+
             //display: none;
             div {
                 display: inline-block;
@@ -73,14 +90,14 @@ $gap: 10px;
                 margin-right: 5px;
             }
 
-            .uk_phonetic_container:before {
+            .uk-phonetic-container:before {
                 content: '英';
                 color: $text-color;
                 font-size: $font-size - 2px;
                 margin-right: 2px;
             }
 
-            .us_phonetic_container:before {
+            .us-phonetic-container:before {
                 content: '美';
                 color: $text-color;
                 font-size: $font-size - 2px;
@@ -89,12 +106,12 @@ $gap: 10px;
 
         }
 
-        .explains_container {
+        .explains-container {
             font-size: $font-size;
             margin-top: $gap;
 
             /*Result Block -- basic container -- explains container*/
-            .explains_list {
+            .explains-list {
                 list-style: none;
                 margin: 0;
                 padding: 0;
@@ -108,33 +125,40 @@ $gap: 10px;
                     margin-bottom: $gap / 2;
                     list-style: none;
                     font-size: $font-size;
+                    span {
+                        display: block;
+                        overflow: hidden;
+                    }
                 }
             }
 
-            .property_container {
+            .property-container {
+                display: block;
+                float: left;
                 font-weight: bold;
                 color: $text-color;
                 margin-right: 5px;
             }
 
-            .voice_container {
+            .voice-container {
                 display: none;
             }
         }
     }
     
-    .web_explains_container {
+    .web-explains-container {
 
-        .web_title {
+        .web-title {
             font-weight: bold;
             opacity: 0.7;
         }
 
-        ul {
+        .web-explains-list {
             list-style: none;
-    
+            margin: 5px 0;
+            padding: 0;
             li {
-                .web_value {
+                .web-value {
                     margin-left: 5px;
                 }
             }
@@ -146,8 +170,49 @@ $gap: 10px;
     }
 }
 
+.ChaZD-arrow-main {
+    position: absolute;
+    z-index: 999998;
+}
+
+.ChaZD-arrow-outer-up, .ChaZD-arrow-outer-down {
+    background: transparent;
+    width: 0;
+    border-left: 12px solid transparent;
+    border-right: 12px solid transparent;
+    position: absolute;
+    left: 0;
+}
+
+.ChaZD-arrow-outer-up {
+    border-bottom: 12px solid $border-color;
+}
+
+.ChaZD-arrow-outer-down {
+    border-top: 12px solid $border-color;
+}
+
+.ChaZD-arrow-inner-up, .ChaZD-arrow-inner-down {
+    background: transparent;
+    width: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    position: absolute;
+    left: 2px;
+    z-index: 999999;
+}
+
+.ChaZD-arrow-inner-up {
+    border-bottom: 10px solid $background-color;
+    top: 2px;
+}
+
+.ChaZD-arrow-inner-down {
+    border-top: 10px solid $background-color;
+}
+
 /*
-.ChaZD_result_container .voice_container::after {
+.ChaZD-result-container .voice-container::after {
   content: '\E803';
   font-family: "YDdict-Icon";
   
@@ -155,7 +220,7 @@ $gap: 10px;
   transition : color 0.2s linear;
 }  
 
-.ChaZD_result_container .voice_container:hover {
+.ChaZD-result-container .voice-container:hover {
   color: rgba(119, 110, 101, 1);
 }
 */

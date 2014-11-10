@@ -49,6 +49,7 @@ ChaZD.prototype.checkErrorCode = function (errorCode) {
 }
 
 ChaZD.prototype.parseResult = function (responseText) {
+    //console.log("Response Text: \n" + responseText);
     var result = JSON.parse(responseText);
     var resultObj = {};
     var validResult = this.checkErrorCode(result["errorCode"]);
@@ -141,11 +142,11 @@ ChaZD.prototype.parseBasicExplains = function (basic, queryWord) {
     for (i = 0; i < explains.length; i++) {
         var currentExplain = explains[i];
         
-        var haveProperty = currentExplain.indexOf(" ");
-        var property = (haveProperty !== -1) ? currentExplain.slice(0, haveProperty) : "";
+        var haveProperty = currentExplain.indexOf(". ");
+        var property = (haveProperty !== -1) ? currentExplain.slice(0, haveProperty + 1) : "";
         var propertyTitle = this.parseProperty(property);
         var propertyContainer = fmt(frames.propertyContainer, propertyTitle, property);
-        var explainText = (haveProperty !== -1) ? currentExplain.slice(haveProperty) : currentExplain;
+        var explainText = (haveProperty !== -1) ? currentExplain.slice(haveProperty + 1) : currentExplain;
         
         var explain = fmt(frames.explain, propertyContainer, explainText);
         explainsContent += explain;
@@ -252,9 +253,9 @@ chrome.runtime.onInstalled.addListener(
             console.log("[ChaZD] update from version " + details.previousVersion);
             //alert("New version has updated!");
             showNotification({
-                title : "ChaZD 更新到0.8.0版啦！",
-                content : "全新的划词结果窗口，界面更清新！划词君更给力，新增音标显示，带有网络释义的词汇也可以显示结果啦。" + 
-                    "更多内容可以点击详情查看。期待您的建议:)"
+                title : "ChaZD 更新到0.8.3版啦！",
+                content : "又发现了一个bug，赶紧修改了一下，以及新的划词显示效果~ 新增划词结果发音功能！" + 
+                    "感谢大家的支持，下个正式版本会添加更多新的功能，敬请期待:)"
             })
         }
     }

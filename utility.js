@@ -10,7 +10,7 @@ var urls = {
 
 var settings = {
     selectMode : "mouseSelect",     //划词的形式：直接划词 | Ctrl+划词
-    showPosition : "side",   //划词翻译结果显示的位置
+    showPosition : "near",   //划词翻译结果显示的位置
     //duration : 5,           //翻译结果显示的时间
     toggleKey : "ctrl",
     showTips : true         //是否显示Tips
@@ -18,29 +18,29 @@ var settings = {
 
 var frames = {
     //title frame
-    titleContainer : "<div class=\"title_container\">#{1}#{2}</div>",
-    titleWord : "<div class=\"title_word\">#{1}#{2}</div>",
-    voiceContainer : "<div class=\"voice_container\" data-src=\"#{1}\" title=\"#{2}\"></div>",
-    titleTranslation : "<div class=\"title_translation\" title=\"结果来自有道翻译\">#{1}</div>",
+    titleContainer : "<div class=\"title-container\">#{1}#{2}</div>",
+    titleWord : "<div class=\"title-word\">#{1}#{2}</div>",
+    voiceContainer : "<div class=\"voice-container\" data-src=\"#{1}\" title=\"#{2}\"></div>",
+    titleTranslation : "<div class=\"title-translation\" title=\"结果来自有道翻译\">#{1}</div>",
 
     //basic frame
-    basicContainer : "<div class=\"basic_container\">#{1}#{2}</div>",
+    basicContainer : "<div class=\"basic-container\">#{1}#{2}</div>",
 
     //basic phonetic frame
-    phoneticContainer : "<div class=\"phonetic_container\">#{1}#{2}</div>",
-    ukPhoneticContainer : "<div class=\"uk_phonetic_container\">#{1}</div>",
-    usPhoneticContainer : "<div class=\"us_phonetic_container\">#{1}</div>",
+    phoneticContainer : "<div class=\"phonetic-container\">#{1}#{2}</div>",
+    ukPhoneticContainer : "<div class=\"uk-phonetic-container\">#{1}</div>",
+    usPhoneticContainer : "<div class=\"us-phonetic-container\">#{1}</div>",
 
     //basic explain frame
-    explainsContainer : "<div class=\"explains_container\">#{1}</div>",
-    explainsList : "<ul class=\"explains_list\">#{1}</ul>",
-    explain : "<li class=\"explains_item\">#{1}#{2}</li>",
-    propertyContainer : "<b class=\"property_container\" title=\"#{1}\">#{2}</b>",
+    explainsContainer : "<div class=\"explains-container\">#{1}</div>",
+    explainsList : "<ul class=\"explains-list\">#{1}</ul>",
+    explain : "<li class=\"explains-item\">#{1}<span class=\"explains-item-value\">#{2}</span></li>",
+    propertyContainer : "<b class=\"property-container\" title=\"#{1}\">#{2}</b>",
 
     //web explain frame
-    webExplainsContainer : "<div class=\"web_explains_container\"><div class=\"web_title\">网络释义及短语</div>#{1}</div>",
-    webEplainsList : "<ul class=\"web_explains_list\">#{1}</ul>",
-    webEplain : "<li><span class=\"web_key\">#{1}</span><span class=\"web_value\">#{2}</span></li>"
+    webExplainsContainer : "<div class=\"web-explains-container\"><div class=\"web-title\">网络释义及短语</div>#{1}</div>",
+    webEplainsList : "<ul class=\"web-explains-list\">#{1}</ul>",
+    webEplain : "<li><span class=\"web-key\">#{1}</span><span class=\"web-value\">#{2}</span></li>"
 }
 
 //判断一个初始化后的对象是否为空

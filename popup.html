@@ -6,39 +6,39 @@
     <link rel="stylesheet" type="text/css" href="style/style.css">
 </head>
 <body>
-  <div class="input_container">
-    <input id="query_word" type="text" name="" placeholder="输入查找的单词或语句" value="" class="input_area">
-    <button id="search" class="query_button"></button>
+  <div class="input-container">
+    <input id="query-word" type="text" name="" placeholder="输入查找的单词或语句" value="" class="input-area">
+    <button id="search" class="query-button"></button>
   </div>
 
-  <div id="query_result" class="result_container unshow"></div>
+  <div id="query-result" class="result-container unshow"></div>
 
-  <div class="tips_container unshow" id="tips">
+  <div class="tips-container unshow" id="tips">
     <p>
       Tips: 你可以通过“Ctrl+Shift+F”快速启动词典，
-      也可以在<span id="key_set" class="link">这里</span>自定义快捷键哦:)
+      也可以在<span id="key-set" class="link">这里</span>自定义快捷键哦:)
     </p>
-    <div id="turn_off_tips">不再显示Tips</div>
+    <div id="turn-off-tips">不再显示Tips</div>
   </div>
 
-  <div class="setting_block unshow" id="settings">
-    <div class="top_menu">
+  <div class="setting-block unshow" id="settings">
+    <div class="top-menu">
       <input type="radio" name="selectMode" id="mouseSelect"><label for="mouseSelect">始终开启划词翻译</label>
     </div>
-    <div class="top_menu">
+    <div class="top-menu">
       <input type="radio" name="selectMode" id="useCtrl"><label for="useCtrl">使用‘
-        <select id="toggle_key">
-          <option value="ctrl" id="ctrl_option">Ctrl</option>
+        <select id="toggle-key">
+          <option value="ctrl" id="ctrl-option">Ctrl</option>
           <option value="alt">Alt</option>
           <option value="shift">Shift</option>
         </select>
       +划词’触发翻译功能</label>
     </div>
     <hr class="carved">
-    <div class="sub_menu">
+    <div class="sub-menu">
       <input type="radio" name="showPosition" value="side" id="showPositionSide"><label for="showSide">翻译结果显示在浏览器边缘</label>
     </div>
-    <div class="sub_menu">
+    <div class="sub-menu">
       <input type="radio" name="showPosition" value="near" id="showPositionNear"><label for="showNear">翻译结果显示在单词附近</label>
     </div>
 <!--
@@ -50,9 +50,9 @@
   </div>
   
   <footer>
-    <div class="setting_button link" id="setting_button" title="设置"></div>
+    <div class="setting-button link" id="setting-button" title="设置"></div>
     Powered By <img src="http://www.youdao.com/help/fanyiapi/brand/002.gif" alt="有道翻译">
-    <div class="contact_info">
+    <div class="contact-info">
       <span id="score" class="link" title="亲，给个好评吧:)"></span>
       <span id="email" class="link" title="如有问题可以发邮件"></span>
       <span id="issue" class="link" title="在Github上提出问题或建议"></span>
