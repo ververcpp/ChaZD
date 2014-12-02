@@ -10,15 +10,17 @@ var urls = {
 
 var settings = {
     selectMode : "mouseSelect",     //划词的形式：直接划词 | Ctrl+划词
-    showPosition : "near",   //划词翻译结果显示的位置
-    //duration : 5,           //翻译结果显示的时间
+    showPosition : "near",  //划词翻译结果显示的位置
+    //duration : 5,         //翻译结果显示的时间
     toggleKey : "ctrl",
-    showTips : true         //是否显示Tips
+    showTips : true,        //是否显示Tips
+    currentWord: "",        //当前划词查询的内容
+    linkQuery: false        //在链接上划词
 }
 
 var frames = {
     //title frame
-    titleContainer : "<div class=\"title-container\">#{1}#{2}</div>",
+    titleContainer : "<div class=\"title-container #{3}\">#{1}#{2}</div>",
     titleWord : "<div class=\"title-word\">#{1}#{2}</div>",
     voiceContainer : "<div class=\"voice-container\" data-src=\"#{1}\" title=\"#{2}\"></div>",
     titleTranslation : "<div class=\"title-translation\" title=\"结果来自有道翻译\">#{1}</div>",

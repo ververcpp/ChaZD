@@ -6,48 +6,65 @@ var $queryResultContainer = $("#query-result");
 if (-1 !== window.navigator.platform.toLowerCase().indexOf("mac")) {
     $("#ctrl-option").html("Command");
 }
+if (!$tipsContainer.hasClass("unshow")){
+    $tipsContainer.addClass("unshow");
+}
 
-function queryInPopup() {
-    if (!$tipsContainer.hasClass("unshow"))
-        $tipsContainer.addClass("unshow");
+
+function queryInPopup(queryText) {
     $input.select();
-    if ($queryResultContainer.hasClass("unshow"))
+    if ($queryResultContainer.hasClass("unshow")){
         $queryResultContainer.removeClass("unshow");
+    }
     $queryResultContainer.html("ψ(._. )>词典君正在翻译。。。");
     console.log("input value: " + $input.val());
-    chrome.extension.sendMessage({queryWord: $input.val()}, function (response) {
-        //alert("response from xhr: " + JSON.stringify(response));
-        var resultObj = response;
-        var resultBlock = "";
-        if (resultObj.validMessage == "query success") {
-            resultBlock += resultObj.titleBlock;
-            if (resultObj.basicBlock !== undefined) {
-                resultBlock += resultObj.basicBlock;
-            }
-            if (resultObj.webBlock !== undefined) {
-                resultBlock += resultObj.webBlock;
-            }
-            $queryResultContainer.html(resultBlock);
-            var voiceCollection = $(".voice-container");
-            //console.log("voiceCollection length: " + voiceCollection.length);
-            voiceCollection.each(function(index, el) {
-                var src = $(this).attr("data-src");
-                //console.log(src);
-                var audioBlock = document.createElement("audio");
-                audioBlock.setAttribute("src", src);
-                //$.get();
-                audioBlock.addEventListener("ended", function (event) {
-                    this.load();
-                })
-                $(this).click(function (event) {
-                    audioBlock.play();
-                })
-            });
-        } else {
-            $queryResultContainer.html(resultObj.validMessage + "<br>词典君崩溃了（┬-┬）");
-        }
-    });
+    console.log("quertText: " + queryText);
+    if (queryText) {
+        $input.val(queryText);
+        chrome.extension.sendMessage({queryWord: queryText, source: "popup"}, buildResult);
+    }
+    else
+        chrome.extension.sendMessage({queryWord: $input.val(), source: "popup"}, buildResult);
 }
+
+var buildResult = function(response) {
+    //alert("response from xhr: " + JSON.stringify(response));
+    var resultObj = response;
+    var resultBlock = "";
+    if (resultObj.validMessage == "query success") {
+        resultBlock += resultObj.titleBlock;
+        if (resultObj.basicBlock !== undefined) {
+            resultBlock += resultObj.basicBlock;
+        }
+        if (resultObj.webBlock !== undefined) {
+            resultBlock += resultObj.webBlock;
+        }
+        $queryResultContainer.html(resultBlock);
+        var voiceCollection = $(".voice-container");
+        //console.log("voiceCollection length: " + voiceCollection.length);
+        voiceCollection.each(function(index, el) {
+            var src = $(this).attr("data-src");
+            //console.log(src);
+            var audioBlock = document.createElement("audio");
+            audioBlock.setAttribute("src", src);
+            //$.get();
+            audioBlock.addEventListener("ended", function (event) {
+                this.load();
+            })
+            $(this).click(function (event) {
+                audioBlock.play();
+            })
+        });
+    } else {
+        if (resultObj.errorCode == 20) {
+            $queryResultContainer.html("<p>这段文字太长，词典君无能为力了（┬_┬） <br><br>试试短一点的吧~</p>");
+        } else if (resultObj.errorCode == 40) {
+            $queryResultContainer.html("<p>对不起，这段文字太高深了，请饶过词典君吧（┬_┬）</p>");
+        } else {
+            $queryResultContainer.html("<p>词典君罢工啦（┬_┬）<br><br> 是不是网络不太好？<br><br> 稍后再试一次吧</p>");
+        } 
+    }
+};
 
 $button.click(function (event) {
     queryInPopup();
@@ -87,6 +104,7 @@ $("#setting-button").click(function (event) {
     }
 });
 
+var linkQuery = $("#linkQuery");
 var mouseSelect = $("#mouseSelect");
 var useCtrl = $("#useCtrl");
 var showPositionSide = $("#showPositionSide");
@@ -98,6 +116,14 @@ var tips = $("#tips");
 var toggleKey = $("#toggle-key");
 
 chrome.storage.sync.get(null, function (items) { 
+    if(items.currentWord !== "") {
+        queryInPopup(items.currentWord);
+    }
+    if(items.linkQuery === true) {
+        linkQuery.attr("checked", true);
+    } else {
+        linkQuery.attr("checked", false);
+    }
     if (items.selectMode === "mouseSelect") {
         mouseSelect.attr("checked", true);
         toggleKey.prop('disabled', 'disabled');
@@ -124,12 +150,19 @@ chrome.storage.sync.get(null, function (items) {
     //currentDuration.innerHTML = showDuration.value = items["duration"];
 });
 
+linkQuery.click(function (event) {
+    var currentLinkQuery = $("#linkQuery:checked").length > 0;
+    chrome.storage.sync.set({"linkQuery": currentLinkQuery}, function() {
+        console.log("[ChaZD] Success update settings linkQuery = " + currentLinkQuery);
+    });
+});
+
 turnOffTips.click(function (event) {
     tips.addClass("unshow");
     chrome.storage.sync.set({"showTips": false}, function() {
         console.log("[ChaZD] Success update settings showTips = false");
     });
-})
+});
 
 mouseSelect.click(function (event) {
     toggleKey.prop('disabled', 'disabled');

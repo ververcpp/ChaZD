@@ -1,4 +1,5 @@
-function ChaZD(queryWord, sendResponse) {
+function ChaZD(queryWord, wordSource, sendResponse) {
+    this.wordSource = wordSource;
     var url = urls.dict + queryWord;
     console.log("Query url: " + url);
     var queryResult = {};
@@ -17,7 +18,8 @@ function ChaZD(queryWord, sendResponse) {
 ChaZD.prototype.checkErrorCode = function (errorCode) {
     var response = {
         "message": "",
-        "error": 0
+        "error": 0,
+        "errorCode": 0
     };
     switch (errorCode) {
         case 0:
@@ -26,22 +28,27 @@ ChaZD.prototype.checkErrorCode = function (errorCode) {
         case 20: 
             response["message"] = "要翻译的文本过长";
             response["error"] = 1;
+            response["errorCode"] = 20;
             break;
         case 30:
             response["message"] = "无法进行有效的翻译";
             response["error"] = 1;
+            response["errorCode"] = 30;
             break;
         case 40:
             response["message"] = "不支持的语言类型";
             response["error"] = 1;
+            response["errorCode"] = 40;
             break;
         case 50:
             response["message"] = "无效的key";
             response["error"] = 1;
+            response["errorCode"] = 50;
             break;
         case 60:
             response["message"] = "无辞典结果";
             response["error"] = 1;
+            response["errorCode"] = 60;
             break;
         default:
     }
@@ -68,8 +75,11 @@ ChaZD.prototype.parseResult = function (responseText) {
             resultObj.haveWebTranslation = true;
             resultObj.webBlock = webBlock;
         }
+    } else {
+        resultObj.errorCode = validResult["errorCode"];
     }
     resultObj.validMessage = validResult["message"];
+    
     return resultObj;
 }
 
@@ -82,13 +92,23 @@ ChaZD.prototype.initTitle = function (result) {
         haveTranslation = false;
 
     var voiceContainer = this.initVoice(queryWord);
+    console.log("word length:", queryWord.length);
+    console.log("word source:", this.wordSource);
+    queryWord = queryWord.length >= 50 && this.wordSource == "select" ? this.shortWord(queryWord) : queryWord;
+
+    console.log("word:", queryWord);
     var titleWord = fmt(frames.titleWord, queryWord, voiceContainer);
     var titleTranslation = fmt(frames.titleTranslation, translation.toString());
 
+
     return {
-        titleBlock : fmt(frames.titleContainer, titleWord,  titleTranslation),
+        titleBlock : fmt(frames.titleContainer, titleWord,  titleTranslation, queryWord.length >=50 ? "long-text" : ""),
         haveTranslation : haveTranslation
     };
+}
+
+ChaZD.prototype.shortWord = function (longWord) {
+    return longWord.slice(0, longWord.lastIndexOf(" ", 50)).concat(" ...");
 }
 
 ChaZD.prototype.parseBasicResult = function (result) {
@@ -253,8 +273,9 @@ chrome.runtime.onInstalled.addListener(
             console.log("[ChaZD] update from version " + details.previousVersion);
             //alert("New version has updated!");
             showNotification({
-                title : "ChaZD 更新到0.8.3版啦！",
-                content : "又发现了一个bug，赶紧修改了一下，以及新的划词显示效果~ 新增划词结果发音功能！" + 
+                title : "ChaZD 更新到0.8.4版啦！",
+                content : "优化了长文本的显示；简化了按钮窗口；同步了划词与弹出窗口的查询结果；使用shift键辅助，对之前无法划词的链接进行划词..." + 
+                    "更多更新内容点击查看更新日志~" + 
                     "感谢大家的支持，下个正式版本会添加更多新的功能，敬请期待:)"
             })
         }
@@ -267,7 +288,7 @@ chrome.storage.sync.get(null,function (items) {
         console.log("storage 是空的");
         chrome.storage.sync.set(settings);
     } else {
-        console.log("[ChaZD][Current Settings]")
+        console.log("[ChaZD][Current Settings]");
         for (var key in items) {
             if (settings[key] === undefined) {
                 chrome.storage.sync.remove(key);
@@ -284,7 +305,7 @@ chrome.runtime.onMessage.addListener(
     function (message, sender, sendResponse) {
         console.log("message from sender:" + JSON.stringify(message));
         console.log("sender is " + JSON.stringify(sender));
-        new ChaZD(message.queryWord, sendResponse);
+        new ChaZD(message.queryWord, message.source, sendResponse);
 
         return true;
 });

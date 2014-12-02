@@ -7,7 +7,7 @@
 </head>
 <body>
   <div class="input-container">
-    <input id="query-word" type="text" name="" placeholder="输入查找的单词或语句" value="" class="input-area">
+    <input id="query-word" type="text" name="" placeholder="" value="" class="input-area">
     <button id="search" class="query-button"></button>
   </div>
 
@@ -22,6 +22,12 @@
   </div>
 
   <div class="setting-block unshow" id="settings">
+    <div class="top-menu">
+      <input type="checkbox" name="linkQuery" id="linkQuery"><label for="linkQuery">使用Shift辅助链接划词</label>
+      <br>
+      <a href="#" title="如果想对某个链接上的单词进行划词，为避免无法取词的问题，可以按住shift键，此时链接会变成可取词的状态，这样就可以轻松划词查词啦:)" class="link-query-help">(鼠标悬停查看说明)</a>
+    </div>
+    <hr class="carved">
     <div class="top-menu">
       <input type="radio" name="selectMode" id="mouseSelect"><label for="mouseSelect">始终开启划词翻译</label>
     </div>

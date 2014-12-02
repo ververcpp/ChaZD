@@ -5,6 +5,7 @@ TODO LIST
 2. <del>在划词结果中显示音标（如果有的话）</del>
 3. 在划词结果中支持发音
 4. <del>改进划词结果显示的效果，整合jQuery</del>
-5. 借鉴TransIt，针对链接的划词进行优化
+5. <del>借鉴TransIt，针对链接的划词进行优化</del>
 6. 准备引入英英翻译的功能，暂定为选用merriam-webster的API
-7. ...
+7. 设计一个新的插件图标
+8. <del>修改popup页面的显示布局，使其更简洁</del>

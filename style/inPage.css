@@ -144,6 +144,10 @@
 .ChaZD-arrow-inner-down {
   border-top: 10px solid #ffffdd; }
 
+a.ChaZD-link {
+  text-decoration: none !important;
+  cursor: text !important; }
+
 /*
 .ChaZD-result-container .voice-container::after {
   content: '\E803';

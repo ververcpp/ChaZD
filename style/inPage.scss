@@ -211,6 +211,10 @@ $gap: 10px;
     border-top: 10px solid $background-color;
 }
 
+a.ChaZD-link {
+    text-decoration: none !important;
+    cursor: text !important;
+}
 /*
 .ChaZD-result-container .voice-container::after {
   content: '\E803';

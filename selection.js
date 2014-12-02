@@ -15,7 +15,11 @@
                 preSelection.again = 0;
                 return;
             }
+            
             if (selectText == "" || !(/[a-zA-Z\s]/.test(selectText))) return;
+            chrome.storage.sync.set({"currentWord" : selectText}, function() {
+                console.log("[ChaZD] Success update settings currentWord = " + selectText);
+            });
             for (var key in preSelection) {
                 if (key == "again")
                     preSelection[key] = 1;
@@ -149,7 +153,8 @@
         var $searchingNode = $("<div id=\"ChaZD-searching\">ψ(._. )>划词君正在翻译。。。</div>")
         $resultContainer.append($searchingNode);
         chrome.runtime.sendMessage({
-            queryWord: text
+            queryWord: text,
+            source: "select"
         }, function(response) {
             var resultObj = response;
             $resultContainer.find("#ChaZD-searching").html("");
@@ -178,6 +183,14 @@
                 } else {
                     $resultContainer.append("╮(╯▽╰)╭划词君无能为力啊<br>复制给词典君试试吧↗");
                 }
+            } else {
+                if (resultObj.errorCode == 20) {
+                    $resultContainer.append("<p>这段文字太长，词典君无能为力了（┬_┬） <br><br>试试短一点的吧~</p>");
+                } else if (resultObj.errorCode == 40) {
+                    $resultContainer.append("<p>对不起，这段文字太高深了，请饶过词典君吧（┬_┬）</p>");
+                } else {
+                    $resultContainer.append("<p>词典君罢工啦（┬_┬）<br><br> 是不是网络不太好？<br><br> 稍后再试一次吧</p>");
+                }                
             }
         });
 
@@ -195,14 +208,19 @@
 
     var useCtrl = true;
     var toggleKey = "ctrl";
+    var linkQuery = false;
     chrome.storage.sync.get(null, function(items) {
         useCtrl = (items["selectMode"] === "useCtrl") ? true : false;
         toggleKey = items["toggleKey"];
+        linkQuery = items["linkQuery"];
     });
 
     chrome.storage.onChanged.addListener(function(changes) {
         for (var key in changes) {
             console.log("[ChaZD]Settings Update, [%s] %s => %s", key, changes[key].oldValue, changes[key].newValue);
+        }
+        if (changes["linkQuery"] !== undefined) {
+            linkQuery = changes["linkQuery"].newValue;
         }
         if (changes["selectMode"] !== undefined) {
             var selectMode = changes["selectMode"].newValue;
@@ -229,6 +247,8 @@
         // }
         $(".ChaZD-result-container").remove();
         $(".ChaZD-arrow-main").remove();
+        chrome.storage.sync.set({"currentWord" : ""});
+        clearSelection(event);
     });
 
     $(window).bind("resize", function(event) {
@@ -266,8 +286,50 @@
         queryInPage(event);
     }
 
-    $(document).bind("mouseup", queryEvent);
+    var $link = null;
 
+    var focusLink = function (event) {
+        if (linkQuery) {
+            event.stopPropagation();
+            $link = $(this);
+            event.shiftKey && disableLink(event);
+
+        }
+    }
+
+    var blurLink = function (event) {
+        if (linkQuery) {
+            event.stopPropagation();
+            if ($link && $link.hasClass("ChaZD-link")) {
+                enableLink(event, true);
+            }
+            $link = null;
+        }
+    }
+
+    var disableLink = function (event) {
+        if ($link && event.shiftKey) {
+            $link.data("ChaZD-href", $link.attr("href")).removeAttr("href").addClass("ChaZD-link");
+        }
+    }
+
+    var enableLink = function (event, ignoreKey) {
+        if ($link && (ignoreKey || event.keyCode == 16)) {
+            $link.attr("href", $link.data("ChaZD-href")).removeClass("ChaZD-link");
+        }
+    }
+
+    var clearSelection = function (event) {
+        if (linkQuery && event.button == 0 && event.shiftKey) {
+            window.getSelection().empty();
+        }
+    }
+    
+    $(document).bind("mouseup", queryEvent);
+    $(document).on("mouseenter", "a", focusLink);
+    $(document).on("mouseleave", "a", blurLink);
+    $(document).on("keydown", disableLink);
+    $(document).on("keyup", enableLink);
     $(document).bind("selectstart", queryEvent); //bug!!
 
 })();

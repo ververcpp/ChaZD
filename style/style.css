@@ -43,7 +43,8 @@ ul {
   border: none;
   font-size: 1.3em;
   width: 270px;
-  margin: 0 0 0 17px;
+  margin: 1px 0 0 20px;
+  border-radius: 3px;
 }
 
 .input-area:focus {
@@ -105,6 +106,10 @@ ul {
   min-width: 50%;
   max-width: 100%;
   font-size: 22px;
+}
+
+.title-container.long-text {
+  font-size: 16px;
 }
 
 .title-container .title-phonetic {
@@ -277,12 +282,14 @@ footer {
   font-size: 0.3em;
   text-align: center;
   position: relative;
+  color: rgba(0, 0, 0, 0.2);
 }
 
 footer img {
   position: relative;
   top:4px;
   width: 50px;
+  opacity: 0.6;
 }
 
 .contact-info {
@@ -369,6 +376,11 @@ footer img {
 
 .setting-block .sub-menu {
   margin-top: 5px;
+}
+
+.setting-block .link-query-help {
+  margin-left: 18px;
+  cursor: help;
 }
 
 .setting-block label {
