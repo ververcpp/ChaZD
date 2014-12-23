@@ -6,51 +6,43 @@ ChaZD 查字典，简洁易用的英汉字典扩展程序，支持划词哦:)
 
 你可以在[Chrome网上应用商店](https://chrome.google.com/webstore/detail/chazd/nkiipedegbhbjmajlhpegcpcaacbfggp)获取该扩展程序并使用。  
 
-**注**：安装扩展后，第一次使用请刷新要查词的页面，划词功能才会生效。
-
+**注**：安装扩展后，第一次使用请刷新要查词的页面，划词功能才会生效；
+**注2**：非中文版Chrome浏览器的用户，如出现插件弹出窗口字体无法正常显示的情况，麻烦请更改浏览器的最小字号为12px
+（具体步骤: settings-->show advanced settings-->Web content中的Customize fonts... -->Minimum font     size将最小字号改为12px）。
 
 主要功能
---------------------
+-----------
 + 支持在线英汉互译
 + 提供英文单词和语句的英音、美音真人发音朗读
 + 支持网页内英文划词翻译
 + 可通过快捷键（Ctrl+Shift+F）快速启动词典扩展，也可以自定义快捷键
 + 可设置开启与关闭划词功能，并可选择划词结果的显示位置
 
-更新日志
--------
-###ver 0.8.4
-+ 优化了长文本的显示
-+ 查词窗口更简洁
-+ 同步了划词与弹出窗口的查询结果，想看更详细的翻译结果，划词后直接打开查词窗口就可以啦，还可以配合快捷键使用哦~
-+ 使用shift键辅助，对之前无法划词的链接进行划词
-
-###ver 0.8.3
-+ 修改若干个BUG
-+ 新的划词显示窗口
-+ 划词支持发音功能
-
-###ver 0.8.0
-+ 全新划词窗口显示
-+ 划词结果新增音标显示
-+ 针对没有词典翻译，但有网络释义的词汇在划词中显示结果
-+ 划词窗口代码结合jQuery
-+ 修改划词结果显示字体、行距等bug
-
-###ver 0.7.0
-+ 增加组合键+划词功能，可选择按键包括(Ctrl/Command || Alt || Shift)
-+ 优化了词组、短句的翻译结果
-+ 取消划词结果显示时间的设置，改为鼠标点击取消显示，更符合用户的使用习惯
-+ 浏览器按钮界面初步结合jQuery，优化显示效果
-+ 增加安装与更新的通知功能
-+ 修复一些小BUG
-
-
 截图
 -----------
 ![Screenshoot 1](/screenshoot/screenshoot1.jpg)  
 ![Screenshoot 2](/screenshoot/screenshoot4.png)
 
+修改代码及部署
+-----------
+
+确保你已经安装了[Node.js](http://nodejs.org/)以及[grunt-cli](https://github.com/gruntjs/grunt-cli),
+
+下载代码并部署
+```shell
+git clone https://github.com/ververcpp/ChaZD.git
+cd ChaZD && npm install   #安装部署依赖的包
+grunt                     #部署代码
+```
+
+进入Chrome的扩展程序设置页面，点击“加载正在开发的扩展程序”，选择ChaZD目录
+
+可以使用`grunt watch`实时更新修改的js、css文件并部署，
+每次修改代码之后直接在浏览器的扩展程序设置页面重新加载ChaZD即可
+
+-----------
 部分功能设计借鉴于[TransIt](https://github.com/GDG-Xian/crx-transit)
 
-源码完全开放，欢迎Clone、提交BUG，并提出您宝贵的意见与建议。
+源码完全开放，欢迎Star、Fork、提交BUG，并提出您宝贵的意见与建议。
+
+

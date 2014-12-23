@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
     <title>Youdao Dictionary</title> 
-    <link rel="stylesheet" type="text/css" href="style/style.css">
+    <link rel="stylesheet" type="text/css" href="public/css/style.min.css">
 </head>
 <body>
   <div class="input-container">
@@ -21,13 +21,16 @@
     <div id="turn-off-tips">不再显示Tips</div>
   </div>
 
-  <div class="setting-block unshow" id="settings">
+  <div class="setting-block" id="settings">
     <div class="top-menu">
       <input type="checkbox" name="linkQuery" id="linkQuery"><label for="linkQuery">使用Shift辅助链接划词</label>
       <br>
       <a href="#" title="如果想对某个链接上的单词进行划词，为避免无法取词的问题，可以按住shift键，此时链接会变成可取词的状态，这样就可以轻松划词查词啦:)" class="link-query-help">(鼠标悬停查看说明)</a>
     </div>
     <hr class="carved">
+    <div class="top-menu">
+      <input type="radio" name="selectMode" id="noSelect"><label for="noSelect">关闭划词翻译功能</label>
+    </div>
     <div class="top-menu">
       <input type="radio" name="selectMode" id="mouseSelect"><label for="mouseSelect">始终开启划词翻译</label>
     </div>
@@ -65,8 +68,7 @@
       <span id="source" class="link" title="源码在这里，欢迎Fork"></span>
     </div>
   </footer>
-  <script type="text/javascript" src="jquery.min.js"></script>
-  <script src="utility.js"></script>
-  <script src="popup.js"></script>
+  <script src="public/js/utility.min.js"></script>
+  <script src="public/js/popup.min.js"></script>
 </body>
 </html>

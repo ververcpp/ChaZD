@@ -1,10 +1,92 @@
 @font-face {
-    font-family: "YDdict-Icon";
-    src: url("fonts/YDdict-Icon-font.eot");
-    src: url("fonts/YDdict-Icon-font.svg") format("svg"),
-         url("fonts/YDdict-Icon-font.woff") format("woff");
-    font-weight: normal;
-    font-style: normal;
+  font-family: "YDdict-Icon";
+  src: url("fonts/YDdict-Icon-font.eot");
+  src: url("fonts/YDdict-Icon-font.svg") format("svg"),
+       url("fonts/YDdict-Icon-font.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@keyframes slide-down {
+  from {
+    transform: scaleY(0);
+    -webkit-transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+    -webkit-transform: scaleY(1);
+  }
+}
+
+@-webkit-keyframes slide-down {
+  from {
+    transform: scaleY(0);
+    -webkit-transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+    -webkit-transform: scaleY(1);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@-webkit-keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+@-webkit-keyframes fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+@keyframes slide-up {
+  from {
+    transform: scaleY(1);
+    -webkit-transform: scaleY(1);
+  }
+  to {
+    transform: scaleY(0);
+    -webkit-transform: scaleY(0);
+  }
+}
+
+@-webkit-keyframes slide-up {
+  from {
+    transform: scaleY(1);
+    -webkit-transform: scaleY(1);
+  }
+  to {
+    transform: scaleY(0);
+    -webkit-transform: scaleY(0);
+  }
 }
 
 body {
@@ -358,16 +440,36 @@ footer img {
 
 .setting-block {
   margin: 5px 0;
-  padding: 10px;
-  position: relative;
   text-align: justify;
-  border: 1px solid #F0EFF0;
+  border: 0px solid #F0EFF0;
   border-radius: 1px;
   background-color: #f2ecd4;
+  max-height: 0;
+  height: 0;
+  overflow-y: hidden;
+  transition: all .5s cubic-bezier(0, 1, 0.5, 1);
+  -webkit-transition: all .5s cubic-bezier(0, 1, 0.5, 1);
+}
+
+.active {
+  border: 1px solid #F0EFF0;
+  max-height: 800px;
+}
+
+.setting-slide-up {
+  animation: fade-out 0.4s ease forwards;
+  -webkit-animation: fade-out 0.4s ease forwards;
+}
+
+.setting-slide-down {
+  display: block;
+  animation: fade-in 0.4s ease forwards;
+  -webkit-animation: fade-in 0.4s ease forwards;
 }
 
 .setting-block div {
   margin-top: 5px;
+  padding: 1px 10px;
 }
 
 .setting-block .top-menu {

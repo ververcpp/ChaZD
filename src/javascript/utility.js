@@ -16,13 +16,13 @@ var settings = {
     showTips : true,        //是否显示Tips
     currentWord: "",        //当前划词查询的内容
     linkQuery: false        //在链接上划词
-}
+};
 
-var frames = {
+var frame = {
     //title frame
     titleContainer : "<div class=\"title-container #{3}\">#{1}#{2}</div>",
     titleWord : "<div class=\"title-word\">#{1}#{2}</div>",
-    voiceContainer : "<div class=\"voice-container\" data-src=\"#{1}\" title=\"#{2}\"></div>",
+    voiceContainer : "<div class=\"voice-container\" data-src=\"#{1}\" title=\"#{2}\" ></div>",
     titleTranslation : "<div class=\"title-translation\" title=\"结果来自有道翻译\">#{1}</div>",
 
     //basic frame
@@ -41,9 +41,9 @@ var frames = {
 
     //web explain frame
     webExplainsContainer : "<div class=\"web-explains-container\"><div class=\"web-title\">网络释义及短语</div>#{1}</div>",
-    webEplainsList : "<ul class=\"web-explains-list\">#{1}</ul>",
-    webEplain : "<li><span class=\"web-key\">#{1}</span><span class=\"web-value\">#{2}</span></li>"
-}
+    webExplainsList : "<ul class=\"web-explains-list\">#{1}</ul>",
+    webExplain : "<li><span class=\"web-key\">#{1}</span><span class=\"web-value\">#{2}</span></li>"
+};
 
 //判断一个初始化后的对象是否为空
 function isEmpty(obj) {
@@ -67,7 +67,7 @@ function fmt() {
             } else {
                 return obj[prop];
             }
-        }(typeof args[1] === 'object' ? args[1] : args, prop.split(/\.|\[|\]\[|\]\./));
+        }(typeof args[1] === "object" ? args[1] : args, prop.split(/\.|\[|\]\[|\]\./));
     });
 }
 

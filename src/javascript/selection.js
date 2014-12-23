@@ -1,4 +1,4 @@
-(function() {
+(function(){
     var preSelection = {
         top: 0,
         bottom: 0,
@@ -6,6 +6,7 @@
         right: 0,
         again: 0
     };
+
     var queryInPage = function(event) {
         var selection = window.getSelection && window.getSelection();
         if(selection && selection.rangeCount > 0) {
@@ -16,13 +17,14 @@
                 return;
             }
             
-            if (selectText == "" || !(/[a-zA-Z\s]/.test(selectText))) return;
+            if (selectText === "" || !(/[a-zA-Z\s]/.test(selectText))) {return;}
             chrome.storage.sync.set({"currentWord" : selectText}, function() {
-                console.log("[ChaZD] Success update settings currentWord = " + selectText);
+                //console.log("[ChaZD] Success update settings currentWord = " + selectText);
             });
             for (var key in preSelection) {
-                if (key == "again")
+                if (key == "again") {
                     preSelection[key] = 1;
+                }
                 else {
                     preSelection[key] = selectRange[key];
                 }              
@@ -36,31 +38,31 @@
                     //console.log("   %s : %s", key, currentSettings[key]);
                 }
                 //var duration = currentSettings["duration"]
-                if (currentSettings["showPosition"] == "side") {
+                if (currentSettings.showPosition == "side") {
                     //console.log("in 1");
                     showResultSide(selectText);
                 }
-                if (currentSettings["showPosition"] == "near") {
+                if (currentSettings.showPosition == "near") {
                     //console.log("in 2");
                     showResultNear(selectText, selectRange, event);
                 }
             });
         }       
-    }
+    };
 
     var showResultSide = function (text) {
         //if(isExist(text)) return;
         var $resultSideContainer = makeResultContainer(text);
-        $resultSideContainer.addClass("ChaZD-result-side");
-        $("html").append($resultSideContainer);
-    }
+        $resultSideContainer.classList.add("ChaZD-result-side");
+        document.documentElement.appendChild($resultSideContainer);
+    };
 
     var showResultNear = function (text, range, event) {
         //if(isExist(text)) return;
-        var $resultNearContainer = makeResultContainer(text);
-        var $arrowMain = makeArrowDiv();
-        $("html").append($resultNearContainer.fadeIn(200));
-        $("html").append($arrowMain.show(100));
+        var resultNearContainer = makeResultContainer(text);
+        var arrowMain = makeArrowDiv();
+        document.documentElement.appendChild(resultNearContainer);
+        document.documentElement.appendChild(arrowMain);
 
         var showNearPosition = {};
         //文本框中选取的内容返回的left top 为0，此时采集鼠标的位置
@@ -72,8 +74,8 @@
             };
         }
 
-        var containerWidth = $resultNearContainer[0].offsetWidth;
-        //var arrowWidth = $arrowMain.width();
+        var containerWidth = resultNearContainer.offsetWidth;
+        //var arrowWidth = arrowMain.width();
         var rangeWidth = range.right - range.left;
         //console.log("arrow width: " + arrowWidth);
         var left = range.left + window.pageXOffset;
@@ -113,127 +115,155 @@
             };
         }
 
-        var arrowMain = $arrowMain[0];
-        var resultNearContainer = $resultNearContainer[0];
+        // var arrowMain = $arrowMain;
+        // var resultNearContainer = resultNearContainer[0];
         //resultNearContainer.style.position = "absolute";
         resultNearContainer.style.left = showNearPosition.left + "px";
         arrowMain.style.left = showNearPosition.arrowLeft + "px";
         if (showNearPosition.bottom) {
             resultNearContainer.style.bottom = showNearPosition.bottom + "px";
             arrowMain.style.bottom = showNearPosition.arrowBottom + "px";
-            $arrowMain.find("#ChaZD-arrow-outer").addClass("ChaZD-arrow-outer-down");
-            $arrowMain.find("#ChaZD-arrow-inner").addClass("ChaZD-arrow-inner-down");
+            document.getElementById("ChaZD-arrow-outer").classList.add("ChaZD-arrow-outer-down");
+            document.getElementById("ChaZD-arrow-inner").classList.add("ChaZD-arrow-inner-down");
         }
         if (showNearPosition.top) {
             resultNearContainer.style.top = showNearPosition.top + "px";
             arrowMain.style.top = showNearPosition.arrowTop + "px";
-            $arrowMain.find("#ChaZD-arrow-outer").addClass("ChaZD-arrow-outer-up");
-            $arrowMain.find("#ChaZD-arrow-inner").addClass("ChaZD-arrow-inner-up");
+            document.getElementById("ChaZD-arrow-outer").classList.add("ChaZD-arrow-outer-up");
+            document.getElementById("ChaZD-arrow-inner").classList.add("ChaZD-arrow-inner-up");
         }
 
         
         // var t = setTimeout(function () {
-        //     document.body.removeChild($resultNearContainer);
+        //     document.body.removeChild(resultNearContainer);
         // }, 1000 * duration);
-    }
+    };
 
     var makeArrowDiv = function () {
-        var $arrowDivMain = $("<div class=\"ChaZD-arrow-main\"></div>");
-        var $arrowDivOuter = $("<div id=\"ChaZD-arrow-outer\"></div>");
-        var $arrowDivInner = $("<div id=\"ChaZD-arrow-inner\"></div>");
-        $arrowDivMain.append($arrowDivOuter).append($arrowDivInner);
+        // var arrowDivMain = document.createElement("div");
+        // arrowDivMain.classList.add("ChaZD-arrow-main");
+        var arrowDivMain = document.createElement("div");
+        arrowDivMain.classList.add("ChaZD-arrow-main");
+        var arrowDivOuter = document.createElement("div");
+        arrowDivOuter.setAttribute("id", "ChaZD-arrow-outer");
+        var arrowDivInner = document.createElement("div");
+        arrowDivInner.setAttribute("id", "ChaZD-arrow-inner");
+        arrowDivMain.appendChild(arrowDivOuter);
+        arrowDivMain.appendChild(arrowDivInner);
 
-        return $arrowDivMain;
-    }
+        return arrowDivMain;
+    };
 
     var makeResultContainer = function (text) {
-        var $resultContainer = $("<div></div>");
-        $resultContainer.addClass("ChaZD-result-container");
-        $resultContainer.attr("data-text", text);
-        var $searchingNode = $("<div id=\"ChaZD-searching\">ψ(._. )>划词君正在翻译。。。</div>")
-        $resultContainer.append($searchingNode);
+        var $resultContainer = document.createElement("div");
+        $resultContainer.classList.add("ChaZD-result-container");
+        $resultContainer.setAttribute("data-text", text);
+        var $searchingNode = document.createElement("div");
+        $searchingNode.setAttribute("id", "ChaZD-searching");
+        $searchingNode.innerHTML = "ψ(._. )>划词君正在翻译。。。";
+        $resultContainer.appendChild($searchingNode);
         chrome.runtime.sendMessage({
             queryWord: text,
             source: "select"
         }, function(response) {
             var resultObj = response;
-            $resultContainer.find("#ChaZD-searching").html("");
+            $searchingNode.innerHTML = "";
             if (resultObj.validMessage === "query success") {
-                $resultContainer.append(resultObj.titleBlock);
-                var $voiceButtom = $resultContainer.find(".voice-container");
-                $voiceButtom.each(function(index, el) {
-                    var voiceSource = $(this).attr("data-src");
-                    var audioBlock = document.createElement("audio");
-                    audioBlock.setAttribute("src", voiceSource);
-                    audioBlock.addEventListener("ended", function (event) {
-                        this.load();
-                    });
-                    $(this).click(function (event) {
-                        audioBlock.play();
-                    })
-                })
 
-                if (resultObj.basicBlock)
-                    $resultContainer.append(resultObj.basicBlock);
+                $resultContainer.innerHTML = resultObj.titleBlock;
+
+                var singleVoiceButton = $resultContainer.querySelector(".voice-container");
+                buildVoice(singleVoiceButton);
+                
+                console.log("inner onclick:" + singleVoiceButton.onclick);
+                console.log(document.querySelector(".voice-container") === singleVoiceButton);
+                
+                var temp = document.createElement("div");
+                if (resultObj.basicBlock) {
+                    temp.innerHTML = resultObj.basicBlock;
+                    $resultContainer.appendChild(temp);
+                }
                 else if (resultObj.haveTranslation) {
-                    $resultContainer.children(".title-container").children(".title-translation").css("display", "block");
+                    $resultContainer.querySelector(".title-translation").style.display = "block";
                 } else if (resultObj.haveWebTranslation) {
-                    $resultContainer.append(resultObj.webBlock);
-                    $resultContainer.children(".web-explains-container").children(".web-title").text("网络释义");
+                    temp.innerHTML = resultObj.webBlock;
+                    $resultContainer.appendChild(temp);
+                    $resultContainer.querySelector(".web-title").innerHTML = "网络释义";
                 } else {
-                    $resultContainer.append("╮(╯▽╰)╭划词君无能为力啊<br>复制给词典君试试吧↗");
+                    $resultContainer.innerHTML = "╮(╯▽╰)╭划词君无能为力啊<br> 还是右键问问谷歌君吧=>";
                 }
             } else {
                 if (resultObj.errorCode == 20) {
-                    $resultContainer.append("<p>这段文字太长，词典君无能为力了（┬_┬） <br><br>试试短一点的吧~</p>");
+                    $resultContainer.innerHTML = "<p>这段文字太长，词典君无能为力了（┬_┬） <br><br>试试短一点的吧~</p>";
                 } else if (resultObj.errorCode == 40) {
-                    $resultContainer.append("<p>对不起，这段文字太高深了，请饶过词典君吧（┬_┬）</p>");
+                    $resultContainer.innerHTML = "<p>对不起，这段文字太高深了，请饶过词典君吧（┬_┬）</p>";
                 } else {
-                    $resultContainer.append("<p>词典君罢工啦（┬_┬）<br><br> 是不是网络不太好？<br><br> 稍后再试一次吧</p>");
+                    $resultContainer.innerHTML = "<p>词典君罢工啦（┬_┬）<br><br> 是不是网络不太好？<br><br> 稍后再试一次吧</p>";
                 }                
             }
         });
 
         return $resultContainer;
+    };
+
+    function buildVoice(voice) {
+        var src = voice.getAttribute("data-src");
+        console.log("voice src: [] " + src);
+        var audioBlock = document.createElement("audio");
+        audioBlock.setAttribute("src", src);
+        //audioBlock.setAttribute("ended", "this.load()");
+        voice.appendChild(audioBlock);
+        audioBlock.addEventListener("ended", function (event) {
+            console.log("loading src: " + this.getAttribute("src"));
+            this.load();
+        });
+        voice.addEventListener("click", function (event) {
+            console.log("playing src: " + audioBlock.getAttribute("src"));
+            audioBlock.play();
+        });
     }
 
     function isExist(newRange, oldRange) {
         if (newRange.top === oldRange.top && 
             newRange.bottom === oldRange.bottom &&
             newRange.left === oldRange.left &&
-            newRange.right === oldRange.right) 
+            newRange.right === oldRange.right) {
             return true;
+        }
         return false;
     }
 
-    var useCtrl = true;
+    var noSelect = true;
+    var useCtrl = false;
     var toggleKey = "ctrl";
     var linkQuery = false;
     chrome.storage.sync.get(null, function(items) {
-        useCtrl = (items["selectMode"] === "useCtrl") ? true : false;
-        toggleKey = items["toggleKey"];
-        linkQuery = items["linkQuery"];
+        noSelect = (items.selectMode === "noSelect") ? true : false;
+        useCtrl = (items.selectMode === "useCtrl") ? true : false;
+        toggleKey = items.toggleKey;
+        linkQuery = items.linkQuery;
     });
 
     chrome.storage.onChanged.addListener(function(changes) {
         for (var key in changes) {
             console.log("[ChaZD]Settings Update, [%s] %s => %s", key, changes[key].oldValue, changes[key].newValue);
         }
-        if (changes["linkQuery"] !== undefined) {
-            linkQuery = changes["linkQuery"].newValue;
+        if (changes.linkQuery !== undefined) {
+            linkQuery = changes.linkQuery.newValue;
         }
-        if (changes["selectMode"] !== undefined) {
-            var selectMode = changes["selectMode"].newValue;
+        if (changes.selectMode !== undefined) {
+            var selectMode = changes.selectMode.newValue;
+            noSelect = (selectMode === "noSelect") ? true : false;
             useCtrl = (selectMode === "useCtrl") ? true : false;
         }
-        if (changes["toggleKey"] !== undefined) {
-            toggleKey = changes["toggleKey"].newValue;
+        if (changes.toggleKey !== undefined) {
+            toggleKey = changes.toggleKey.newValue;
         }
     });
 
     var classNameCollection = ["ChaZD-result-container", "title-container", "title-word", "title-translation", "basic-container", "phonetic-container", "explains-container", "explains-container", "explains-list", "property-container", "explains-item", "voice-container", "us-phonetic-container", "uk-phonetic-container", "web-explains-container", "web-explains-list", "web-key", "explains-item-value", "web-value"];
 
-    $(document).bind("mousedown", function(event) {
+    document.documentElement.addEventListener("mousedown", function(event) {
         //console.log("event.target: " + event.target.className);
         for (var name in classNameCollection) {
             if (event.target.classList.contains(classNameCollection[name])) {
@@ -245,19 +275,32 @@
         // for (var i = 0; i < existResult.length; i++) {
         //     existResult[i].parentNode.removeChild(existResult[i]);
         // }
-        $(".ChaZD-result-container").remove();
-        $(".ChaZD-arrow-main").remove();
+        var chazdResult = document.querySelector(".ChaZD-result-container");
+        var chazdArrow = document.querySelector(".ChaZD-arrow-main");
+        if (chazdResult) {
+            document.documentElement.removeChild(chazdResult);
+        }
+        if (chazdArrow) {
+            document.documentElement.removeChild(chazdArrow);
+        }
         chrome.storage.sync.set({"currentWord" : ""});
         clearSelection(event);
     });
 
-    $(window).bind("resize", function(event) {
-        $(".ChaZD-result-container").remove();
-        $(".ChaZD-arrow-main").remove();
-    })
+    window.addEventListener("resize", function(event) {
+        var chazdResult = document.querySelector(".ChaZD-result-container");
+        var chazdArrow = document.querySelector(".ChaZD-arrow-main");
+        if (chazdResult) {
+            document.documentElement.removeChild(chazdResult);
+        }
+        if (chazdArrow) {
+            document.documentElement.removeChild(chazdArrow);
+        }
+    });
     
     var queryEvent = function (event) {
         //console.log("[ChaZD] current useCtrl: " + useCtrl);
+        if (noSelect) {return;}
         if (useCtrl) {
             //console.log("current togglekey: " + toggleKey);
             if (toggleKey === "ctrl") {
@@ -284,52 +327,67 @@
             }
         }
         queryInPage(event);
-    }
+        // var selectVoice = null
+        // if(selectVoice = document.querySelector(".voice-container")) {
+        //     selectVoice.addEventListener("click", function(event) {
+        //         selectVoice.firstChild.play();
+        //     })
+        // }
+    };
 
-    var $link = null;
+    var link = null;
 
     var focusLink = function (event) {
         if (linkQuery) {
             event.stopPropagation();
-            $link = $(this);
-            event.shiftKey && disableLink(event);
+            link = this;
+            if(event.shiftKey) {
+                disableLink(event);
+            }
 
         }
-    }
+    };
 
     var blurLink = function (event) {
         if (linkQuery) {
             event.stopPropagation();
-            if ($link && $link.hasClass("ChaZD-link")) {
+            if (link && link.classList.contains("ChaZD-link")) {
                 enableLink(event, true);
             }
-            $link = null;
+            link = null;
         }
-    }
+    };
 
     var disableLink = function (event) {
-        if ($link && event.shiftKey) {
-            $link.data("ChaZD-href", $link.attr("href")).removeAttr("href").addClass("ChaZD-link");
+        if (link && event.shiftKey) {
+            link.setAttribute("ChaZD-href", link.getAttribute("href"));
+            link.removeAttribute("href");
+            link.classList.add("ChaZD-link");
         }
-    }
+    };
 
     var enableLink = function (event, ignoreKey) {
-        if ($link && (ignoreKey || event.keyCode == 16)) {
-            $link.attr("href", $link.data("ChaZD-href")).removeClass("ChaZD-link");
+        if (link && (ignoreKey || event.keyCode == 16)) {
+            link.setAttribute("href", link.getAttribute("ChaZD-href"));
+            link.removeAttribute("ChaZD-href");
+            link.classList.remove("ChaZD-link");
         }
-    }
+    };
 
     var clearSelection = function (event) {
-        if (linkQuery && event.button == 0 && event.shiftKey) {
+        if (linkQuery && event.button === 0 && event.shiftKey) {
             window.getSelection().empty();
         }
-    }
+    };
     
-    $(document).bind("mouseup", queryEvent);
-    $(document).on("mouseenter", "a", focusLink);
-    $(document).on("mouseleave", "a", blurLink);
-    $(document).on("keydown", disableLink);
-    $(document).on("keyup", enableLink);
-    $(document).bind("selectstart", queryEvent); //bug!!
-
+    document.documentElement.addEventListener("mouseup", queryEvent);
+    var links = document.querySelectorAll("a");
+    for (var i = 0, len = links.length; i < len; i++) {
+        links[i].addEventListener("mouseenter", focusLink);
+        links[i].addEventListener("mouseleave", blurLink);
+    }
+    document.documentElement.addEventListener("keydown", disableLink);
+    document.documentElement.addEventListener("keyup", enableLink);
+    document.documentElement.addEventListener("selectstart", queryEvent); //bug!!
 })();
+    

@@ -1,0 +1,38 @@
+{
+  "name": "ChaZD",
+  "version": "0.8.5",
+  "description": "A Chinese-English translator extension for Chrome",
+  "main": null,
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ververcpp/ChaZD.git"
+  },
+  "keywords": [
+    "chrome",
+    "extension",
+    "ChaZD"
+  ],
+  "author": "ververcpp",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ververcpp/ChaZD/issues"
+  },
+  "engines": {
+    "node": ">= 0.8.0"
+  },
+  "homepage": "https://github.com/ververcpp/ChaZD",
+  "devDependencies": {
+    "grunt": "^0.4.5",
+    "grunt-contrib-copy": "^0.7.0",
+    "grunt-contrib-cssmin": "^0.10.0",
+    "grunt-contrib-jshint": "^0.10.0",
+    "grunt-contrib-sass": "^0.8.1",
+    "grunt-contrib-uglify": "^0.6.0",
+    "grunt-contrib-watch": "^0.6.1",
+    "load-grunt-tasks": "^1.0.0"
+  },
+  "dependencies": {}
+}

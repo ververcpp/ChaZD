@@ -8,10 +8,10 @@ function ChaZD(queryWord, wordSource, sendResponse) {
 
     xhr.open("GET", url, true);
     xhr.onreadystatechange = function() {
-        if (xhr.readyState != 4) return;
+        if (xhr.readyState != 4) {return;}
         var resultObj = self.parseResult.call(self, xhr.responseText);
         sendResponse(resultObj);
-    }
+    };
     xhr.send();
 }
 
@@ -23,73 +23,74 @@ ChaZD.prototype.checkErrorCode = function (errorCode) {
     };
     switch (errorCode) {
         case 0:
-            response["message"] = "query success";
+            response.message = "query success";
             break;
         case 20: 
-            response["message"] = "要翻译的文本过长";
-            response["error"] = 1;
-            response["errorCode"] = 20;
+            response.message = "要翻译的文本过长";
+            response.error = 1;
+            response.errorCode = 20;
             break;
         case 30:
-            response["message"] = "无法进行有效的翻译";
-            response["error"] = 1;
-            response["errorCode"] = 30;
+            response.message = "无法进行有效的翻译";
+            response.error = 1;
+            response.errorCode = 30;
             break;
         case 40:
-            response["message"] = "不支持的语言类型";
-            response["error"] = 1;
-            response["errorCode"] = 40;
+            response.message = "不支持的语言类型";
+            response.error = 1;
+            response.errorCode = 40;
             break;
         case 50:
-            response["message"] = "无效的key";
-            response["error"] = 1;
-            response["errorCode"] = 50;
+            response.message = "无效的key";
+            response.error = 1;
+            response.errorCode = 50;
             break;
         case 60:
-            response["message"] = "无辞典结果";
-            response["error"] = 1;
-            response["errorCode"] = 60;
+            response.message = "无辞典结果";
+            response.error = 1;
+            response.errorCode = 60;
             break;
         default:
     }
     return response;  
-}
+};
 
 ChaZD.prototype.parseResult = function (responseText) {
     //console.log("Response Text: \n" + responseText);
     var result = JSON.parse(responseText);
     var resultObj = {};
-    var validResult = this.checkErrorCode(result["errorCode"]);
+    var validResult = this.checkErrorCode(result.errorCode);
     resultObj.haveWebTranslation = false;
-    if (!validResult["error"]) {
+    if (!validResult.error) {
         var title = this.initTitle(result);
         resultObj.titleBlock = title.titleBlock;
         resultObj.haveTranslation = title.haveTranslation;
-        if (result["basic"] !== undefined) {
+        if (result.basic !== undefined) {
             var basicBlock = this.parseBasicResult(result);
             resultObj.basicBlock = basicBlock;
         }
 
-        if (result["web"] !== undefined) {
+        if (result.web !== undefined) {
             var webBlock = this.parseWebResult(result);
             resultObj.haveWebTranslation = true;
             resultObj.webBlock = webBlock;
         }
     } else {
-        resultObj.errorCode = validResult["errorCode"];
+        resultObj.errorCode = validResult.errorCode;
     }
-    resultObj.validMessage = validResult["message"];
+    resultObj.validMessage = validResult.message;
     
     return resultObj;
-}
+};
 
 ChaZD.prototype.initTitle = function (result) {
-    var translation = result["translation"];
-    var queryWord = result["query"];
+    var translation = result.translation;
+    var queryWord = result.query;
     console.log("[ChaZD] queryWord: %s, translation: %s.", queryWord, translation.toString());
     var haveTranslation = true;
-    if (trim(queryWord.toLowerCase()) === trim(translation.toString().toLowerCase()))
+    if (trim(queryWord.toLowerCase()) === trim(translation.toString().toLowerCase())) {
         haveTranslation = false;
+    }
 
     var voiceContainer = this.initVoice(queryWord);
     console.log("word length:", queryWord.length);
@@ -97,30 +98,30 @@ ChaZD.prototype.initTitle = function (result) {
     queryWord = queryWord.length >= 50 && this.wordSource == "select" ? this.shortWord(queryWord) : queryWord;
 
     console.log("word:", queryWord);
-    var titleWord = fmt(frames.titleWord, queryWord, voiceContainer);
-    var titleTranslation = fmt(frames.titleTranslation, translation.toString());
+    var titleWord = fmt(frame.titleWord, queryWord, voiceContainer);
+    var titleTranslation = fmt(frame.titleTranslation, translation.toString());
 
 
     return {
-        titleBlock : fmt(frames.titleContainer, titleWord,  titleTranslation, queryWord.length >=50 ? "long-text" : ""),
+        titleBlock : fmt(frame.titleContainer, titleWord,  titleTranslation, queryWord.length >=50 ? "long-text" : ""),
         haveTranslation : haveTranslation
     };
-}
+};
 
 ChaZD.prototype.shortWord = function (longWord) {
     return longWord.slice(0, longWord.lastIndexOf(" ", 50)).concat(" ...");
-}
+};
 
 ChaZD.prototype.parseBasicResult = function (result) {
-    var basic = result["basic"];
-    var queryWord = result["query"];
+    var basic = result.basic;
+    var queryWord = result.query;
     
     var phoneticBlock = this.parseBasicPhonetic(basic, queryWord);
     var explainsBlock = this.parseBasicExplains(basic, queryWord);
 
-    var basicContainer = fmt(frames.basicContainer, phoneticBlock, explainsBlock);
+    var basicContainer = fmt(frame.basicContainer, phoneticBlock, explainsBlock);
     return basicContainer;
-}
+};
 
 ChaZD.prototype.parseBasicPhonetic = function (basic, queryWord) {
     var ukPhonetic = basic["uk-phonetic"];
@@ -128,21 +129,22 @@ ChaZD.prototype.parseBasicPhonetic = function (basic, queryWord) {
 
     if (ukPhonetic !== undefined && usPhonetic !== undefined) {
         var ukVoice = this.initVoice(queryWord, 1);
-        var ukPhoneticContainer = fmt(frames.ukPhoneticContainer, "[" + ukPhonetic + "]" + ukVoice);
+        var ukPhoneticContainer = fmt(frame.ukPhoneticContainer, "[" + ukPhonetic + "]" + ukVoice);
     
         var usVoice = this.initVoice(queryWord, 2);
-        var usPhoneticContainer = fmt(frames.usPhoneticContainer, "[" + usPhonetic + "]" + usVoice);
+        var usPhoneticContainer = fmt(frame.usPhoneticContainer, "[" + usPhonetic + "]" + usVoice);
 
-        return fmt(frames.phoneticContainer, ukPhoneticContainer, usPhoneticContainer);
+        return fmt(frame.phoneticContainer, ukPhoneticContainer, usPhoneticContainer);
     }
   
-    return fmt(frames.phoneticContainer, "", "");
-}
+    return fmt(frame.phoneticContainer, "", "");
+};
 
 ChaZD.prototype.initVoice = function (queryWord, type) {
     var src = urls.voice + queryWord;
-    if(type !== undefined) 
+    if(type !== undefined) {
         src = src + "&type=" + type;
+    }
     var title = ""; 
     if(type === 1){
         title = "英音";
@@ -152,11 +154,11 @@ ChaZD.prototype.initVoice = function (queryWord, type) {
         title = "真人发音";
     }
 
-    return fmt(frames.voiceContainer, src, title);
-}
+    return fmt(frame.voiceContainer, src, title);
+};
 
 ChaZD.prototype.parseBasicExplains = function (basic, queryWord) {
-    var explains = basic["explains"];
+    var explains = basic.explains;
     var i;
     var explainsContent = "";
     for (i = 0; i < explains.length; i++) {
@@ -165,15 +167,15 @@ ChaZD.prototype.parseBasicExplains = function (basic, queryWord) {
         var haveProperty = currentExplain.indexOf(". ");
         var property = (haveProperty !== -1) ? currentExplain.slice(0, haveProperty + 1) : "";
         var propertyTitle = this.parseProperty(property);
-        var propertyContainer = fmt(frames.propertyContainer, propertyTitle, property);
+        var propertyContainer = fmt(frame.propertyContainer, propertyTitle, property);
         var explainText = (haveProperty !== -1) ? currentExplain.slice(haveProperty + 1) : currentExplain;
         
-        var explain = fmt(frames.explain, propertyContainer, explainText);
+        var explain = fmt(frame.explain, propertyContainer, explainText);
         explainsContent += explain;
     } 
     
-    return fmt(frames.explainsContainer, fmt(frames.explainsList, explainsContent));
-}
+    return fmt(frame.explainsContainer, fmt(frame.explainsList, explainsContent));
+};
 
 ChaZD.prototype.parseProperty = function (property) {
     var propertyText = "";
@@ -212,21 +214,21 @@ ChaZD.prototype.parseProperty = function (property) {
     }
 
     return propertyText;
-}
+};
 
 
 
 ChaZD.prototype.parseWebResult = function (result) {
-    var web = result["web"];
+    var web = result.web;
     var webExplainsContent = "";
     var i;
     for (i = 0; i < web.length ; i++) {
-        var webEplain = fmt(frames.webEplain, web[i].key, web[i].value);
-        webExplainsContent += webEplain;
+        var webExplain = fmt(frame.webExplain, web[i].key, web[i].value);
+        webExplainsContent += webExplain;
     }
 
-    return fmt(frames.webExplainsContainer, fmt(frames.webEplainsList, webExplainsContent));
-}
+    return fmt(frame.webExplainsContainer, fmt(frame.webExplainsList, webExplainsContent));
+};
 
 /*
 ChaZD.prototype.parsePhrase = function (queryWord, key) {
@@ -241,11 +243,11 @@ function showNotification(note) {
         console.log("[ChaZD] Your browse don't support notification.");
         return;
     }
-    var havePermission = Notifications.checkPermission();
-    if (havePermission == 0) {
-        var notification = Notifications.createNotification(
-            note.icon || chrome.extension.getURL('icons/icon128.png'),
-            note.title || 'ChaZD 查字典',
+    var notification = null, havePermission = Notifications.checkPermission();
+    if (havePermission === 0) {
+        notification = Notifications.createNotification(
+            note.icon || chrome.extension.getURL("icons/icon128.png"),
+            note.title || "ChaZD 查字典",
             note.content
         );
         notification.onclick = function () {
@@ -262,29 +264,28 @@ function showNotification(note) {
 chrome.runtime.onInstalled.addListener(
     function (details) {
         if (details.reason === "install") {
-            console.log("[ChaZD] first install.")
+            console.log("[ChaZD] first install.");
             showNotification({
                 title : "感谢支持ChaZD！",
                 content : "ChaZD力求成为最简洁易用的Chrome词典扩展，欢迎提出您的意见或建议。" + 
                     "如果觉得ChaZD还不错，记得给5星好评哦:)"
-            })
+            });
             //alert("Thank you for install my app:)");
         } else if (details.reason === "update") {
             console.log("[ChaZD] update from version " + details.previousVersion);
             //alert("New version has updated!");
             showNotification({
-                title : "ChaZD 更新到0.8.4版啦！",
-                content : "优化了长文本的显示；简化了按钮窗口；同步了划词与弹出窗口的查询结果；使用shift键辅助，对之前无法划词的链接进行划词..." + 
-                    "更多更新内容点击查看更新日志~" + 
-                    "感谢大家的支持，下个正式版本会添加更多新的功能，敬请期待:)"
-            })
+                title : "ChaZD 更新到0.8.6版啦！",
+                content : "新版的ChaZD变得更加小巧，文件大小减少为原先的一半\n" + 
+                          "PS. 感谢大家的支持，由于本人不擅长UI设计，所以图标\n太难看的话请大家先将就一下，我会争取弄一个好看点的\n图标，在后续版本中更新，大家敬请期待:)"
+            });
         }
     }
 );
 
 chrome.storage.sync.get(null,function (items) {
     //console.log(JSON.stringify(items));
-    if (items["showTips"] === undefined ) {
+    if (items.showTips === undefined ) {
         console.log("storage 是空的");
         chrome.storage.sync.set(settings);
     } else {
