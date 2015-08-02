@@ -2,12 +2,12 @@
   "manifest_version": 2,
 
   "name": "ChaZD",
-  "version": "0.8.6",
+  "version": "0.8.10",
   "description": "ChaZD 查字典，简洁易用的英汉字典扩展程序，支持划词哦:)",
 
   "permissions": [
-    "http://dict.youdao.com/*",
-    "http://fanyi.youdao.com/*",
+    "https://dict.youdao.com/*",
+    "https://fanyi.youdao.com/*",
     "contextMenus",
     "tabs",
     "storage",

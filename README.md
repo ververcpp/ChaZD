@@ -21,6 +21,7 @@ ChaZD 查字典，简洁易用的英汉字典扩展程序，支持划词哦:)
 截图
 -----------
 ![Screenshoot 1](/screenshoot/screenshoot1.jpg)  
+---
 ![Screenshoot 2](/screenshoot/screenshoot4.png)
 
 修改代码及部署

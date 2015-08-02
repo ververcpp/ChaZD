@@ -4,18 +4,19 @@ var api = {
 };
 
 var urls = {
-    dict : "http://fanyi.youdao.com/openapi.do?keyfrom=" + api.keyfrom +"&key="+ api.key +"&type=data&doctype=json&version=1.1&q=",
-    voice : "http://dict.youdao.com/dictvoice?audio="
+    dict : "https://fanyi.youdao.com/openapi.do?keyfrom=" + api.keyfrom +"&key="+ api.key +"&type=data&doctype=json&version=1.1&q=",
+    voice : "https://dict.youdao.com/dictvoice?audio="
 };
 
 var settings = {
     selectMode : "mouseSelect",     //划词的形式：直接划词 | Ctrl+划词
-    showPosition : "near",  //划词翻译结果显示的位置
-    //duration : 5,         //翻译结果显示的时间
+    showPosition : "near",          //划词翻译结果显示的位置
+    //duration : 5,                 //翻译结果显示的时间
     toggleKey : "ctrl",
-    showTips : true,        //是否显示Tips
-    currentWord: "",        //当前划词查询的内容
-    linkQuery: false        //在链接上划词
+    showTips : true,                //是否显示Tips
+    currentWord: "",                //当前划词查询的内容
+    linkQuery: false,               //在链接上划词
+    autoAudio: false,               //划词自动发音
 };
 
 var frame = {

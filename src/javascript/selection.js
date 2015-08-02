@@ -175,8 +175,8 @@
                 var singleVoiceButton = $resultContainer.querySelector(".voice-container");
                 buildVoice(singleVoiceButton);
                 
-                console.log("inner onclick:" + singleVoiceButton.onclick);
-                console.log(document.querySelector(".voice-container") === singleVoiceButton);
+                //console.log("inner onclick:" + singleVoiceButton.onclick);
+                //console.log(document.querySelector(".voice-container") === singleVoiceButton);
                 
                 var temp = document.createElement("div");
                 if (resultObj.basicBlock) {
@@ -208,17 +208,20 @@
 
     function buildVoice(voice) {
         var src = voice.getAttribute("data-src");
-        console.log("voice src: [] " + src);
+        //console.log("voice src: [] " + src);
         var audioBlock = document.createElement("audio");
         audioBlock.setAttribute("src", src);
         //audioBlock.setAttribute("ended", "this.load()");
         voice.appendChild(audioBlock);
+        if (autoAudio === true) {
+            audioBlock.play();
+        }
         audioBlock.addEventListener("ended", function (event) {
-            console.log("loading src: " + this.getAttribute("src"));
+            //console.log("loading src: " + this.getAttribute("src"));
             this.load();
         });
         voice.addEventListener("click", function (event) {
-            console.log("playing src: " + audioBlock.getAttribute("src"));
+            //console.log("playing src: " + audioBlock.getAttribute("src"));
             audioBlock.play();
         });
     }
@@ -237,19 +240,24 @@
     var useCtrl = false;
     var toggleKey = "ctrl";
     var linkQuery = false;
+    var autoAudio = false;
     chrome.storage.sync.get(null, function(items) {
         noSelect = (items.selectMode === "noSelect") ? true : false;
         useCtrl = (items.selectMode === "useCtrl") ? true : false;
         toggleKey = items.toggleKey;
         linkQuery = items.linkQuery;
+        autoAudio = items.autoAudio;
     });
 
     chrome.storage.onChanged.addListener(function(changes) {
         for (var key in changes) {
-            console.log("[ChaZD]Settings Update, [%s] %s => %s", key, changes[key].oldValue, changes[key].newValue);
+            //console.log("[ChaZD]Settings Update, [%s] %s => %s", key, changes[key].oldValue, changes[key].newValue);
         }
         if (changes.linkQuery !== undefined) {
             linkQuery = changes.linkQuery.newValue;
+        }
+        if (changes.autoAudio !== undefined) {
+            autoAudio = changes.autoAudio.newValue;
         }
         if (changes.selectMode !== undefined) {
             var selectMode = changes.selectMode.newValue;

@@ -12,13 +12,15 @@ if (!$tipsContainer.classList.contains("unshow")){
 
 
 function queryInPopup(queryText) {
-    $input.select();
+    //$input.select();
     if ($queryResultContainer.classList.contains("unshow")){
         $queryResultContainer.classList.remove("unshow");
     }
-    $queryResultContainer.innerHTML = "ψ(._. )>词典君正在翻译。。。";
-    console.log("input value: " + $input.value);
-    console.log("quertText: " + queryText);
+    if ($input.value !== "") {
+        $queryResultContainer.innerHTML = "ψ(._. )>词典君正在翻译。。。";
+    }
+    //console.log("input value: " + $input.value);
+    //console.log("quertText: " + queryText);
     if (queryText) {
         $input.value = queryText;
         chrome.extension.sendMessage({queryWord: queryText, source: "popup"}, buildResult);
@@ -63,24 +65,37 @@ $button.addEventListener("click", function (event) {
 });
 
 $input.select();
-$input.addEventListener("keyup", function (event) {
-    if (event.keyCode === 13) {
-        queryInPopup();
-    }
+// $input.addEventListener("keyup", function (event) {
+//     if (event.keyCode === 13) {
+//         queryInPopup();
+//     }
+// });
+
+$input.addEventListener("input", function (event) {
+    var currentInput = $input.value;
+    setTimeout(function () {
+        if ($input.value === currentInput) {
+            queryInPopup();
+        }
+    }, 500);
 });
+
+// $input.addEventListener("keydown", function (event) {
+//     clearTimeout(t);
+// });
 
 function buildVoice(voice) {
     var src = voice.getAttribute("data-src");
-    console.log("voice src: [] " + src);
+    //console.log("voice src: [] " + src);
     var audioBlock = document.createElement("audio");
     audioBlock.setAttribute("src", src);
     voice.appendChild(audioBlock);
     audioBlock.addEventListener("ended", function (event) {
-        console.log("loading src: " + this.getAttribute("src"));
+        //console.log("loading src: " + this.getAttribute("src"));
         this.load();
     });
     voice.addEventListener("click", function (event) {
-        console.log("playing src: " + audioBlock.getAttribute("src"));
+        //console.log("playing src: " + audioBlock.getAttribute("src"));
         audioBlock.play();
     });
 }
@@ -124,11 +139,12 @@ function totalHeight(className) {
     return sum + 10;
 }
 
-var blockHeight = totalHeight("top-menu") + totalHeight("sub-menu") + totalHeight("carved") + 10;
+var blockHeight = totalHeight("top-menu") + totalHeight("sub-menu") + totalHeight("carved") + 20;
 var linkQuery = document.querySelector("#linkQuery");
 var noSelect = document.querySelector("#noSelect");
 var mouseSelect = document.querySelector("#mouseSelect");
 var useCtrl = document.querySelector("#useCtrl");
+var autoAudio = document.querySelector("#autoAudio");
 var showPositionSide = document.querySelector("#showPositionSide");
 var showPositionNear = document.querySelector("#showPositionNear");
 //var showDuration = $("showDuration");
@@ -146,17 +162,25 @@ chrome.storage.sync.get(null, function (items) {
     } else {
         linkQuery.checked = false;
     }
+    if(items.autoAudio === true) {
+        autoAudio.checked = true;
+    } else {
+        autoAudio.checked = false;
+    }
     if (items.selectMode === "noSelect") {
         noSelect.checked = true;
         toggleKey.disabled = true;
+        autoAudio.disabled = true;
     }
     if (items.selectMode === "mouseSelect") {
         mouseSelect.checked = true;
         toggleKey.disabled = true;
+        autoAudio.disabled = false;
     }
     if (items.selectMode === "useCtrl") {
         useCtrl.checked = true;
         toggleKey.disabled = false;
+        autoAudio.disabled = false;
     }
     if (items.showTips) {
         tips.classList.remove("unshow");
@@ -179,56 +203,66 @@ chrome.storage.sync.get(null, function (items) {
 linkQuery.addEventListener("click", function (event) {
     var currentLinkQuery = linkQuery.checked;
     chrome.storage.sync.set({"linkQuery": currentLinkQuery}, function() {
-        console.log("[ChaZD] Success update settings linkQuery = " + currentLinkQuery);
+        //console.log("[ChaZD] Success update settings linkQuery = " + currentLinkQuery);
+    });
+});
+
+autoAudio.addEventListener("click", function (event) {
+    var currentAutoAudio = autoAudio.checked;
+    chrome.storage.sync.set({"autoAudio": currentAutoAudio}, function() {
+        //console.log("[ChaZD] Success update settings autoAudio = " + currentAutoAudio);        
     });
 });
 
 turnOffTips.addEventListener("click", function (event) {
     tips.classList.add("unshow");
     chrome.storage.sync.set({"showTips": false}, function() {
-        console.log("[ChaZD] Success update settings showTips = false");
+        //console.log("[ChaZD] Success update settings showTips = false");
     });
 });
 
 noSelect.addEventListener("click", function (event) {
     toggleKey.disabled = true;
+    autoAudio.disabled = true;
     chrome.storage.sync.set({"selectMode" : "noSelect"}, function() {
-        console.log("[ChaZD] Success update settings selectMode = noSelect");
+        //console.log("[ChaZD] Success update settings selectMode = noSelect");
     });
 });
 
 mouseSelect.addEventListener("click", function (event) {
     toggleKey.disabled = true;
+    autoAudio.disabled = false;
     chrome.storage.sync.set({"selectMode" : "mouseSelect"}, function() {
-        console.log("[ChaZD] Success update settings selectMode = mouseSelect");
+        //console.log("[ChaZD] Success update settings selectMode = mouseSelect");
     });
 });
 
 useCtrl.addEventListener("click", function (event) {
-    console.log(toggleKey.disabled);
+    //console.log(toggleKey.disabled);
     if (toggleKey.disabled) {
         toggleKey.disabled = false;
     }
+    autoAudio.disabled = false;
     chrome.storage.sync.set({"selectMode" : "useCtrl"}, function() {
-        console.log("[ChaZD] Success update settings selectMode = useCtrl");
+        //console.log("[ChaZD] Success update settings selectMode = useCtrl");
     });
 });
 
 showPositionSide.addEventListener("click", function (event) {
     chrome.storage.sync.set({"showPosition" : "side"}, function() {
-        console.log("[ChaZD] Success update settings showPosition = side");
+        //console.log("[ChaZD] Success update settings showPosition = side");
     });
 });
 
 showPositionNear.addEventListener("click", function (event) {
     chrome.storage.sync.set({"showPosition" : "near"}, function() {
-        console.log("[ChaZD] Success update settings showPosition = near");
+        //console.log("[ChaZD] Success update settings showPosition = near");
     });
 });
 
 toggleKey.onchange = function (event) {
-    chrome.storage.sync.set({"toggleKey" : this.checked}, function() {
-        console.log("[ChaZD] Success update settings toggleKey = " + this.checked);
+    chrome.storage.sync.set({"toggleKey" : this.value}, function() {
+        //console.log("[ChaZD] Success update settings toggleKey = " + this.value);
     });
 };
 

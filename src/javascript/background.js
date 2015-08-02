@@ -1,7 +1,7 @@
 function ChaZD(queryWord, wordSource, sendResponse) {
     this.wordSource = wordSource;
     var url = urls.dict + queryWord;
-    console.log("Query url: " + url);
+    //console.log("Query url: " + url);
     var queryResult = {};
     var self = this;
     var xhr = new XMLHttpRequest();
@@ -86,18 +86,18 @@ ChaZD.prototype.parseResult = function (responseText) {
 ChaZD.prototype.initTitle = function (result) {
     var translation = result.translation;
     var queryWord = result.query;
-    console.log("[ChaZD] queryWord: %s, translation: %s.", queryWord, translation.toString());
+    //console.log("[ChaZD] queryWord: %s, translation: %s.", queryWord, translation.toString());
     var haveTranslation = true;
     if (trim(queryWord.toLowerCase()) === trim(translation.toString().toLowerCase())) {
         haveTranslation = false;
     }
 
     var voiceContainer = this.initVoice(queryWord);
-    console.log("word length:", queryWord.length);
-    console.log("word source:", this.wordSource);
+    //console.log("word length:", queryWord.length);
+    //console.log("word source:", this.wordSource);
     queryWord = queryWord.length >= 50 && this.wordSource == "select" ? this.shortWord(queryWord) : queryWord;
 
-    console.log("word:", queryWord);
+    //console.log("word:", queryWord);
     var titleWord = fmt(frame.titleWord, queryWord, voiceContainer);
     var titleTranslation = fmt(frame.titleTranslation, translation.toString());
 
@@ -240,7 +240,7 @@ window.Notifications = window.Notifications || window.webkitNotifications;
 
 function showNotification(note) {
     if (!Notifications) {
-        console.log("[ChaZD] Your browse don't support notification.");
+        //console.log("[ChaZD] Your browse don't support notification.");
         return;
     }
     var notification = null, havePermission = Notifications.checkPermission();
@@ -264,7 +264,7 @@ function showNotification(note) {
 chrome.runtime.onInstalled.addListener(
     function (details) {
         if (details.reason === "install") {
-            console.log("[ChaZD] first install.");
+            //console.log("[ChaZD] first install.");
             showNotification({
                 title : "感谢支持ChaZD！",
                 content : "ChaZD力求成为最简洁易用的Chrome词典扩展，欢迎提出您的意见或建议。" + 
@@ -272,12 +272,12 @@ chrome.runtime.onInstalled.addListener(
             });
             //alert("Thank you for install my app:)");
         } else if (details.reason === "update") {
-            console.log("[ChaZD] update from version " + details.previousVersion);
+            //console.log("[ChaZD] update from version " + details.previousVersion);
             //alert("New version has updated!");
             showNotification({
-                title : "ChaZD 更新到0.8.6版啦！",
-                content : "新版的ChaZD变得更加小巧，文件大小减少为原先的一半\n" + 
-                          "PS. 感谢大家的支持，由于本人不擅长UI设计，所以图标\n太难看的话请大家先将就一下，我会争取弄一个好看点的\n图标，在后续版本中更新，大家敬请期待:)"
+                title : "ChaZD 更新到0.8.10版啦！",
+                content : "新增划词自动发音功能，可以在设置中开启或关闭该功能；\n接口改用https协议；\n优化用户体验。"
+                          
             });
         }
     }
@@ -286,14 +286,14 @@ chrome.runtime.onInstalled.addListener(
 chrome.storage.sync.get(null,function (items) {
     //console.log(JSON.stringify(items));
     if (items.showTips === undefined ) {
-        console.log("storage 是空的");
+        //console.log("storage 是空的");
         chrome.storage.sync.set(settings);
     } else {
-        console.log("[ChaZD][Current Settings]");
+        //console.log("[ChaZD][Current Settings]");
         for (var key in items) {
             if (settings[key] === undefined) {
                 chrome.storage.sync.remove(key);
-                console.log("Remove setting item '%s'", key);
+                //console.log("Remove setting item '%s'", key);
             } else {
                 settings[key] = items[key];
             }
@@ -304,8 +304,8 @@ chrome.storage.sync.get(null,function (items) {
 
 chrome.runtime.onMessage.addListener(
     function (message, sender, sendResponse) {
-        console.log("message from sender:" + JSON.stringify(message));
-        console.log("sender is " + JSON.stringify(sender));
+        //console.log("message from sender:" + JSON.stringify(message));
+        //console.log("sender is " + JSON.stringify(sender));
         new ChaZD(message.queryWord, message.source, sendResponse);
 
         return true;
