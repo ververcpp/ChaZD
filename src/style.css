@@ -385,7 +385,7 @@ footer img {
 .link {
   cursor: pointer;
   text-decoration: none;
-  color: rgba(0, 0, 0, 0.2);
+  color: rgba(0, 0, 0, 0.6);
   opacity: 0.5;
 }
 
@@ -447,6 +447,7 @@ footer img {
   max-height: 0;
   height: 0;
   overflow-y: hidden;
+  color: #6e665e;
   transition: all .5s cubic-bezier(0, 1, 0.5, 1);
   -webkit-transition: all .5s cubic-bezier(0, 1, 0.5, 1);
 }
@@ -489,8 +490,31 @@ footer img {
   margin-left: 5px;
 }
 
+.setting-block label.unactive {
+  color: rgba(0, 0, 0, 0.5);
+}
+
 .setting-block input {
   margin: 0;
+}
+
+.setting-block .sub-title {
+  margin-left: 17px;
+  font-size: 90%;
+}
+
+.setting-block .sub-button {
+  margin-left: 5px;
+}
+
+.setting-block .sub-label{
+  font-size: 90%;
+}
+
+#currentDuration {
+  display: inline-block;
+  width: 14px;
+  text-align: center;
 }
 
 input[type="range"] {

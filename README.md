@@ -6,7 +6,7 @@ ChaZD 查字典，简洁易用的英汉字典扩展程序，支持划词哦:)
 
 你可以在[Chrome网上应用商店](https://chrome.google.com/webstore/detail/chazd/nkiipedegbhbjmajlhpegcpcaacbfggp)获取该扩展程序并使用。  
 
-**注**：安装扩展后，第一次使用请刷新要查词的页面，划词功能才会生效；
+**注**：安装扩展后，第一次使用请刷新要查词的页面，划词功能才会生效；  
 **注2**：非中文版Chrome浏览器的用户，如出现插件弹出窗口字体无法正常显示的情况，麻烦请更改浏览器的最小字号为12px
 （具体步骤: settings-->show advanced settings-->Web content中的Customize fonts... -->Minimum font     size将最小字号改为12px）。
 

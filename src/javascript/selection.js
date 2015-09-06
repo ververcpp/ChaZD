@@ -50,11 +50,21 @@
         }       
     };
 
+    var timeout;
+
     var showResultSide = function (text) {
         //if(isExist(text)) return;
         var $resultSideContainer = makeResultContainer(text);
         $resultSideContainer.classList.add("ChaZD-result-side");
         document.documentElement.appendChild($resultSideContainer);
+
+        if (autoHide) {
+            timeout = setTimeout(function () {
+                if (document.querySelector(".ChaZD-result-container")) {
+                    document.documentElement.removeChild($resultSideContainer);
+                }
+            }, 1000 * showDuration);
+        }
     };
 
     var showResultNear = function (text, range, event) {
@@ -120,20 +130,34 @@
         //resultNearContainer.style.position = "absolute";
         resultNearContainer.style.left = showNearPosition.left + "px";
         arrowMain.style.left = showNearPosition.arrowLeft + "px";
+        var chazdArrowOuter = document.querySelectorAll(".ChaZD-arrow-outer");
+        var chazdArrowInner = document.querySelectorAll(".ChaZD-arrow-inner");
+        var i, len;
         if (showNearPosition.bottom) {
             resultNearContainer.style.bottom = showNearPosition.bottom + "px";
             arrowMain.style.bottom = showNearPosition.arrowBottom + "px";
-            document.getElementById("ChaZD-arrow-outer").classList.add("ChaZD-arrow-outer-down");
-            document.getElementById("ChaZD-arrow-inner").classList.add("ChaZD-arrow-inner-down");
+            for (i = 0, len = chazdArrowOuter.length; i < len; i++) {
+                chazdArrowOuter[i].classList.add("ChaZD-arrow-outer-down");
+                chazdArrowInner[i].classList.add("ChaZD-arrow-inner-down");
+            }
         }
         if (showNearPosition.top) {
             resultNearContainer.style.top = showNearPosition.top + "px";
             arrowMain.style.top = showNearPosition.arrowTop + "px";
-            document.getElementById("ChaZD-arrow-outer").classList.add("ChaZD-arrow-outer-up");
-            document.getElementById("ChaZD-arrow-inner").classList.add("ChaZD-arrow-inner-up");
+            for (i = 0, len = chazdArrowOuter.length; i < len; i++) {
+                chazdArrowOuter[i].classList.add("ChaZD-arrow-outer-up");
+                chazdArrowInner[i].classList.add("ChaZD-arrow-inner-up");
+            }
         }
 
-        
+        if (autoHide) {
+            timeout = setTimeout(function () {
+                if (document.querySelector(".ChaZD-result-container") && document.querySelector(".ChaZD-arrow-main")) {
+                    document.documentElement.removeChild(resultNearContainer);
+                    document.documentElement.removeChild(arrowMain);
+                }
+            }, 1000 * showDuration);
+        }
         // var t = setTimeout(function () {
         //     document.body.removeChild(resultNearContainer);
         // }, 1000 * duration);
@@ -145,9 +169,9 @@
         var arrowDivMain = document.createElement("div");
         arrowDivMain.classList.add("ChaZD-arrow-main");
         var arrowDivOuter = document.createElement("div");
-        arrowDivOuter.setAttribute("id", "ChaZD-arrow-outer");
+        arrowDivOuter.setAttribute("class", "ChaZD-arrow-outer");
         var arrowDivInner = document.createElement("div");
-        arrowDivInner.setAttribute("id", "ChaZD-arrow-inner");
+        arrowDivInner.setAttribute("class", "ChaZD-arrow-inner");
         arrowDivMain.appendChild(arrowDivOuter);
         arrowDivMain.appendChild(arrowDivInner);
 
@@ -210,7 +234,7 @@
         var src = voice.getAttribute("data-src");
         //console.log("voice src: [] " + src);
         var audioBlock = document.createElement("audio");
-        audioBlock.setAttribute("src", src);
+        audioBlock.setAttribute("src", src + "&type=" + defaultVoice);
         //audioBlock.setAttribute("ended", "this.load()");
         voice.appendChild(audioBlock);
         if (autoAudio === true) {
@@ -241,23 +265,32 @@
     var toggleKey = "ctrl";
     var linkQuery = false;
     var autoAudio = false;
+    var autoHide = false;
+    var showDuration = 3;
+    var defaultVoice = 1;
     chrome.storage.sync.get(null, function(items) {
         noSelect = (items.selectMode === "noSelect") ? true : false;
         useCtrl = (items.selectMode === "useCtrl") ? true : false;
         toggleKey = items.toggleKey;
         linkQuery = items.linkQuery;
         autoAudio = items.autoAudio;
+        autoHide = items.autoHide;
+        showDuration = items.showDuration;
+        defaultVoice = items.defaultVoice;
     });
 
     chrome.storage.onChanged.addListener(function(changes) {
-        for (var key in changes) {
-            //console.log("[ChaZD]Settings Update, [%s] %s => %s", key, changes[key].oldValue, changes[key].newValue);
-        }
+        // for (var key in changes) {
+        //     console.log("[ChaZD]Settings Update, [%s] %s => %s", key, changes[key].oldValue, changes[key].newValue);
+        // }
         if (changes.linkQuery !== undefined) {
             linkQuery = changes.linkQuery.newValue;
         }
         if (changes.autoAudio !== undefined) {
             autoAudio = changes.autoAudio.newValue;
+        }
+        if (changes.defaultVoice !== undefined) {
+            defaultVoice = changes.defaultVoice.newValue;
         }
         if (changes.selectMode !== undefined) {
             var selectMode = changes.selectMode.newValue;
@@ -266,6 +299,12 @@
         }
         if (changes.toggleKey !== undefined) {
             toggleKey = changes.toggleKey.newValue;
+        }
+        if (changes.autoHide !== undefined) {
+            autoHide = changes.autoHide.newValue;
+        }
+        if (changes.showDuration !== undefined) {
+            showDuration = changes.showDuration.newValue;
         }
     });
 
@@ -283,16 +322,22 @@
         // for (var i = 0; i < existResult.length; i++) {
         //     existResult[i].parentNode.removeChild(existResult[i]);
         // }
-        var chazdResult = document.querySelector(".ChaZD-result-container");
-        var chazdArrow = document.querySelector(".ChaZD-arrow-main");
+        clearTimeout(timeout);
+        var chazdResult = document.querySelectorAll(".ChaZD-result-container");
+        var chazdArrow = document.querySelectorAll(".ChaZD-arrow-main");
+        var i, len;
         if (chazdResult) {
-            document.documentElement.removeChild(chazdResult);
+            for (i = 0, len = chazdResult.length; i < len; i++) {
+                document.documentElement.removeChild(chazdResult[i]);
+            }
         }
         if (chazdArrow) {
-            document.documentElement.removeChild(chazdArrow);
+            for (i = 0, len = chazdArrow.length; i < len; i++) {
+                document.documentElement.removeChild(chazdArrow[i]);
+            }
         }
         chrome.storage.sync.set({"currentWord" : ""});
-        clearSelection(event);
+        //clearSelection(event);
     });
 
     window.addEventListener("resize", function(event) {
@@ -347,9 +392,12 @@
 
     var focusLink = function (event) {
         if (linkQuery) {
-            event.stopPropagation();
-            link = this;
+            //event.stopPropagation();
+            //console.log("focusLink");
+            link = event.target;
+            //console.log(link);
             if(event.shiftKey) {
+                // alert("have shift");
                 disableLink(event);
             }
 
@@ -358,7 +406,7 @@
 
     var blurLink = function (event) {
         if (linkQuery) {
-            event.stopPropagation();
+            //event.stopPropagation();
             if (link && link.classList.contains("ChaZD-link")) {
                 enableLink(event, true);
             }
@@ -368,6 +416,7 @@
 
     var disableLink = function (event) {
         if (link && event.shiftKey) {
+            clearSelection(event);
             link.setAttribute("ChaZD-href", link.getAttribute("href"));
             link.removeAttribute("href");
             link.classList.add("ChaZD-link");
@@ -383,17 +432,30 @@
     };
 
     var clearSelection = function (event) {
-        if (linkQuery && event.button === 0 && event.shiftKey) {
+        if (linkQuery && event.shiftKey) {
             window.getSelection().empty();
         }
     };
     
     document.documentElement.addEventListener("mouseup", queryEvent);
-    var links = document.querySelectorAll("a");
-    for (var i = 0, len = links.length; i < len; i++) {
-        links[i].addEventListener("mouseenter", focusLink);
-        links[i].addEventListener("mouseleave", blurLink);
-    }
+    document.documentElement.addEventListener("mouseover", function (e) {
+        if (e.target.nodeName === "A" || e.target.nodeName === "a") {
+            focusLink(e);
+        }
+    });
+    document.documentElement.addEventListener("mouseout", function (e) {
+        if (e.target.nodeName === "A" || e.target.nodeName === "a") {
+            blurLink(e);
+        }
+    });
+    // var links = document.querySelectorAll("a");
+    // console.log(links);
+    // for (var i = 0, len = links.length; i < len; i++) {
+    //     links[i].addEventListener("mouseover", function (e) {
+    //         console.log("heloo world");
+    //     });
+    //     //links[i].addEventListener("mouseleave", blurLink);
+    // }
     document.documentElement.addEventListener("keydown", disableLink);
     document.documentElement.addEventListener("keyup", enableLink);
     document.documentElement.addEventListener("selectstart", queryEvent); //bug!!

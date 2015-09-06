@@ -9,8 +9,15 @@ function ChaZD(queryWord, wordSource, sendResponse) {
     xhr.open("GET", url, true);
     xhr.onreadystatechange = function() {
         if (xhr.readyState != 4) {return;}
-        var resultObj = self.parseResult.call(self, xhr.responseText);
-        sendResponse(resultObj);
+        var result = JSON.parse(xhr.responseText);
+
+        if (queryWord.indexOf("-") !== -1 && !self.checkErrorCode(result.errorCode).error && !self.haveTranslation(result)) {
+            //优化使用连字符的词的查询结果
+            new ChaZD(queryWord.replace(/-/g, " "), wordSource, sendResponse);
+        } else {
+            var resultObj = self.parseResult.call(self, result);
+            sendResponse(resultObj);
+        }
     };
     xhr.send();
 }
@@ -55,16 +62,15 @@ ChaZD.prototype.checkErrorCode = function (errorCode) {
     return response;  
 };
 
-ChaZD.prototype.parseResult = function (responseText) {
+ChaZD.prototype.parseResult = function (result) {
     //console.log("Response Text: \n" + responseText);
-    var result = JSON.parse(responseText);
     var resultObj = {};
     var validResult = this.checkErrorCode(result.errorCode);
     resultObj.haveWebTranslation = false;
     if (!validResult.error) {
         var title = this.initTitle(result);
         resultObj.titleBlock = title.titleBlock;
-        resultObj.haveTranslation = title.haveTranslation;
+        resultObj.haveTranslation = this.haveTranslation(result);
         if (result.basic !== undefined) {
             var basicBlock = this.parseBasicResult(result);
             resultObj.basicBlock = basicBlock;
@@ -83,14 +89,26 @@ ChaZD.prototype.parseResult = function (responseText) {
     return resultObj;
 };
 
+ChaZD.prototype.haveTranslation = function (result) {
+    if (this.checkErrorCode(result.errorCode).error) {
+        return false;
+    }
+    var translation = result.translation;
+    var queryWord = result.query;
+    if (trim(queryWord.toLowerCase()) === trim(translation.toString().toLowerCase())) {
+        return false;
+    }
+    return true;
+};
+
 ChaZD.prototype.initTitle = function (result) {
     var translation = result.translation;
     var queryWord = result.query;
     //console.log("[ChaZD] queryWord: %s, translation: %s.", queryWord, translation.toString());
-    var haveTranslation = true;
-    if (trim(queryWord.toLowerCase()) === trim(translation.toString().toLowerCase())) {
-        haveTranslation = false;
-    }
+    // var haveTranslation = true;
+    // if (trim(queryWord.toLowerCase()) === trim(translation.toString().toLowerCase())) {
+    //     haveTranslation = false;
+    // }
 
     var voiceContainer = this.initVoice(queryWord);
     //console.log("word length:", queryWord.length);
@@ -104,7 +122,7 @@ ChaZD.prototype.initTitle = function (result) {
 
     return {
         titleBlock : fmt(frame.titleContainer, titleWord,  titleTranslation, queryWord.length >=50 ? "long-text" : ""),
-        haveTranslation : haveTranslation
+        //haveTranslation : haveTranslation
     };
 };
 
@@ -230,6 +248,17 @@ ChaZD.prototype.parseWebResult = function (result) {
     return fmt(frame.webExplainsContainer, fmt(frame.webExplainsList, webExplainsContent));
 };
 
+//字符串预处理，解析驼峰命名法和下划线命名法的单词、词组
+function preprocessWord (originWord) {
+    if (originWord.indexOf(" ") === -1) {
+        originWord = originWord.replace(/_/g, " ");
+        if (/[a-z]+/.test(originWord)) {
+            originWord = trim(originWord.replace(/([A-Z])/g, " $1"));
+        }
+    }
+    return originWord;
+}
+
 /*
 ChaZD.prototype.parsePhrase = function (queryWord, key) {
     var words = [];
@@ -275,8 +304,8 @@ chrome.runtime.onInstalled.addListener(
             //console.log("[ChaZD] update from version " + details.previousVersion);
             //alert("New version has updated!");
             showNotification({
-                title : "ChaZD 更新到0.8.10版啦！",
-                content : "新增划词自动发音功能，可以在设置中开启或关闭该功能；\n接口改用https协议；\n优化用户体验。"
+                title : "ChaZD 更新到0.8.15版！",
+                content : "修改 bug"
                           
             });
         }
@@ -306,7 +335,7 @@ chrome.runtime.onMessage.addListener(
     function (message, sender, sendResponse) {
         //console.log("message from sender:" + JSON.stringify(message));
         //console.log("sender is " + JSON.stringify(sender));
-        new ChaZD(message.queryWord, message.source, sendResponse);
+        new ChaZD(preprocessWord(message.queryWord), message.source, sendResponse);
 
         return true;
 });

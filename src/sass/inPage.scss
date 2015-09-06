@@ -209,7 +209,7 @@ $gap: 10px;
 
 .ChaZD-arrow-main {
     position: absolute;
-    z-index: 999998;
+    z-index: 999997;
     @include animation("fade-in 0.3s ease");
 }
 
@@ -237,7 +237,7 @@ $gap: 10px;
     border-right: 10px solid transparent;
     position: absolute;
     left: 2px;
-    z-index: 999999;
+    // z-index: 999999;
 }
 
 .ChaZD-arrow-inner-up {

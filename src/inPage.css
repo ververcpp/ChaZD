@@ -205,7 +205,7 @@
 
 .ChaZD-arrow-main {
   position: absolute;
-  z-index: 999998;
+  z-index: 999997;
   -webkit-animation: fade-in 0.3s ease;
   -moz-animation: fade-in 0.3s ease;
   -o-animation: fade-in 0.3s ease;
@@ -236,7 +236,6 @@
   border-right: 10px solid transparent;
   position: absolute;
   left: 2px;
-  z-index: 999999;
 }
 
 .ChaZD-arrow-inner-up {

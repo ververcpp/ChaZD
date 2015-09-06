@@ -65,24 +65,15 @@ $button.addEventListener("click", function (event) {
 });
 
 $input.select();
-// $input.addEventListener("keyup", function (event) {
-//     if (event.keyCode === 13) {
-//         queryInPopup();
-//     }
-// });
 
 $input.addEventListener("input", function (event) {
     var currentInput = $input.value;
     setTimeout(function () {
-        if ($input.value === currentInput) {
+        if ($input.value === currentInput && $input.value !== "") {
             queryInPopup();
         }
     }, 500);
 });
-
-// $input.addEventListener("keydown", function (event) {
-//     clearTimeout(t);
-// });
 
 function buildVoice(voice) {
     var src = voice.getAttribute("data-src");
@@ -139,16 +130,19 @@ function totalHeight(className) {
     return sum + 10;
 }
 
-var blockHeight = totalHeight("top-menu") + totalHeight("sub-menu") + totalHeight("carved") + 20;
+var blockHeight = totalHeight("top-menu") + totalHeight("sub-menu") + totalHeight("carved") + 32;
 var linkQuery = document.querySelector("#linkQuery");
 var noSelect = document.querySelector("#noSelect");
 var mouseSelect = document.querySelector("#mouseSelect");
 var useCtrl = document.querySelector("#useCtrl");
 var autoAudio = document.querySelector("#autoAudio");
+var defaultUk = document.querySelector("#defaultUk");
+var defaultUs = document.querySelector("#defaultUs");
 var showPositionSide = document.querySelector("#showPositionSide");
 var showPositionNear = document.querySelector("#showPositionNear");
-//var showDuration = $("showDuration");
-//var currentDuration = $("currentDuration");
+var autoHide = document.querySelector("#autoHide");
+var showDuration = document.querySelector("#showDuration");
+var currentDuration = document.querySelector("#currentDuration");
 var turnOffTips = document.querySelector("#turn-off-tips");
 var tips = document.querySelector("#tips");
 var toggleKey = document.querySelector("#toggle-key");
@@ -159,26 +153,51 @@ chrome.storage.sync.get(null, function (items) {
     }
     if(items.linkQuery === true) {
         linkQuery.checked = true;
+        linkQuery.nextSibling.classList.remove("unactive");
     } else {
         linkQuery.checked = false;
+        linkQuery.nextSibling.classList.add("unactive");
     }
     if(items.autoAudio === true) {
         autoAudio.checked = true;
+        autoAudio.nextSibling.classList.remove("unactive");
     } else {
         autoAudio.checked = false;
+        autoAudio.nextSibling.classList.add("unactive");
+    }
+    if(items.defaultVoice === 1) {
+        defaultUk.checked = true;
+        defaultUk.nextSibling.classList.remove("unactive");
+        defaultUs.nextSibling.classList.add("unactive");
+    } else if (items.defaultVoice === 2) {
+        defaultUs.checked = true;
+        defaultUs.nextSibling.classList.remove("unactive");
+        defaultUk.nextSibling.classList.add("unactive");
     }
     if (items.selectMode === "noSelect") {
         noSelect.checked = true;
+        noSelect.nextSibling.classList.remove("unactive");
+        mouseSelect.nextSibling.classList.add("unactive");
+        useCtrl.nextSibling.classList.add("unactive");
+
         toggleKey.disabled = true;
         autoAudio.disabled = true;
     }
     if (items.selectMode === "mouseSelect") {
         mouseSelect.checked = true;
+        mouseSelect.nextSibling.classList.remove("unactive");
+        noSelect.nextSibling.classList.add("unactive");
+        useCtrl.nextSibling.classList.add("unactive");
+
         toggleKey.disabled = true;
         autoAudio.disabled = false;
     }
     if (items.selectMode === "useCtrl") {
         useCtrl.checked = true;
+        useCtrl.nextSibling.classList.remove("unactive");
+        noSelect.nextSibling.classList.add("unactive");
+        mouseSelect.nextSibling.classList.add("unactive");
+
         toggleKey.disabled = false;
         autoAudio.disabled = false;
     }
@@ -187,8 +206,12 @@ chrome.storage.sync.get(null, function (items) {
     }
     if (items.showPosition === "side") {
         showPositionSide.checked = true;
+        showPositionSide.nextSibling.classList.remove("unactive");
+        showPositionNear.nextSibling.classList.add("unactive");
     } else if (items.showPosition === "near") {
         showPositionNear.checked = true;
+        showPositionSide.nextSibling.classList.add("unactive");
+        showPositionNear.nextSibling.classList.remove("unactive");
     }
     if (items.toggleKey === "ctrl") {
         toggleKey.selectedIndex = 0;
@@ -197,11 +220,21 @@ chrome.storage.sync.get(null, function (items) {
     } else if (items.toggleKey === "shift") {
         toggleKey.selectedIndex = 2;
     }
-    //currentDuration.innerHTML = showDuration.value = items["duration"];
+    if (items.autoHide === true) {
+        autoHide.checked = true;
+        autoHide.nextSibling.classList.remove("unactive");
+        showDuration.disabled = false;
+    } else {
+        autoHide.checked = false;
+        autoHide.nextSibling.classList.add("unactive");
+        showDuration.disabled = true;
+    }
+    currentDuration.innerHTML = showDuration.value = items.showDuration;
 });
 
 linkQuery.addEventListener("click", function (event) {
     var currentLinkQuery = linkQuery.checked;
+    linkQuery.nextSibling.classList.toggle("unactive");
     chrome.storage.sync.set({"linkQuery": currentLinkQuery}, function() {
         //console.log("[ChaZD] Success update settings linkQuery = " + currentLinkQuery);
     });
@@ -209,8 +242,29 @@ linkQuery.addEventListener("click", function (event) {
 
 autoAudio.addEventListener("click", function (event) {
     var currentAutoAudio = autoAudio.checked;
+    if (currentAutoAudio) {
+        autoAudio.nextSibling.classList.remove("unactive");
+    } else {
+        autoAudio.nextSibling.classList.add("unactive");
+    }
     chrome.storage.sync.set({"autoAudio": currentAutoAudio}, function() {
         //console.log("[ChaZD] Success update settings autoAudio = " + currentAutoAudio);        
+    });
+});
+
+defaultUk.addEventListener("click", function (event) {
+    defaultUk.nextSibling.classList.remove("unactive");
+    defaultUs.nextSibling.classList.add("unactive");
+    chrome.storage.sync.set({"defaultVoice": 1}, function() {
+        //console.log("[ChaZD] Success update settings defaultVoice = 1");   
+    });
+});
+
+defaultUs.addEventListener("click", function (event) {
+    defaultUs.nextSibling.classList.remove("unactive");
+    defaultUk.nextSibling.classList.add("unactive");
+    chrome.storage.sync.set({"defaultVoice": 2}, function() {
+        //console.log("[ChaZD] Success update settings defaultVoice = 2");   
     });
 });
 
@@ -224,6 +278,10 @@ turnOffTips.addEventListener("click", function (event) {
 noSelect.addEventListener("click", function (event) {
     toggleKey.disabled = true;
     autoAudio.disabled = true;
+
+    noSelect.nextSibling.classList.remove("unactive");
+    mouseSelect.nextSibling.classList.add("unactive");
+    useCtrl.nextSibling.classList.add("unactive");
     chrome.storage.sync.set({"selectMode" : "noSelect"}, function() {
         //console.log("[ChaZD] Success update settings selectMode = noSelect");
     });
@@ -232,6 +290,10 @@ noSelect.addEventListener("click", function (event) {
 mouseSelect.addEventListener("click", function (event) {
     toggleKey.disabled = true;
     autoAudio.disabled = false;
+
+    noSelect.nextSibling.classList.add("unactive");
+    mouseSelect.nextSibling.classList.remove("unactive");
+    useCtrl.nextSibling.classList.add("unactive");    
     chrome.storage.sync.set({"selectMode" : "mouseSelect"}, function() {
         //console.log("[ChaZD] Success update settings selectMode = mouseSelect");
     });
@@ -243,22 +305,50 @@ useCtrl.addEventListener("click", function (event) {
         toggleKey.disabled = false;
     }
     autoAudio.disabled = false;
+    noSelect.nextSibling.classList.add("unactive");
+    mouseSelect.nextSibling.classList.add("unactive");
+    useCtrl.nextSibling.classList.remove("unactive");
     chrome.storage.sync.set({"selectMode" : "useCtrl"}, function() {
         //console.log("[ChaZD] Success update settings selectMode = useCtrl");
     });
 });
 
 showPositionSide.addEventListener("click", function (event) {
+    showPositionSide.nextSibling.classList.remove("unactive");
+    showPositionNear.nextSibling.classList.add("unactive");
     chrome.storage.sync.set({"showPosition" : "side"}, function() {
         //console.log("[ChaZD] Success update settings showPosition = side");
     });
 });
 
 showPositionNear.addEventListener("click", function (event) {
+    showPositionSide.nextSibling.classList.add("unactive");
+    showPositionNear.nextSibling.classList.remove("unactive");
     chrome.storage.sync.set({"showPosition" : "near"}, function() {
         //console.log("[ChaZD] Success update settings showPosition = near");
     });
 });
+
+autoHide.addEventListener("click", function (event) {
+    var currentAutoHide = autoHide.checked;
+    if (currentAutoHide) {
+        autoHide.nextSibling.classList.remove("unactive");
+        showDuration.disabled = false;
+    } else {
+        autoHide.nextSibling.classList.add("unactive");
+        showDuration.disabled = true;
+    }
+    chrome.storage.sync.set({"autoHide" : currentAutoHide}, function() {
+        //console.log("[ChaZD] Success update settings showPosition = near");
+    });
+});
+
+showDuration.addEventListener("input", function (event) {
+    currentDuration.innerHTML = showDuration.value;
+    chrome.storage.sync.set({"showDuration" : showDuration.value}, function() {
+        //console.log("[ChaZD] Success update settings toggleKey = " + this.value);
+    });
+}); 
 
 toggleKey.onchange = function (event) {
     chrome.storage.sync.set({"toggleKey" : this.value}, function() {
