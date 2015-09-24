@@ -354,6 +354,12 @@
     var queryEvent = function (event) {
         //console.log("[ChaZD] current useCtrl: " + useCtrl);
         if (noSelect) {return;}
+        for (var name in classNameCollection) {
+            if (event.target.classList.contains(classNameCollection[name])) {
+                //console.log("[ChaZD] don't remove");
+                return;
+            }
+        }
         if (useCtrl) {
             //console.log("current togglekey: " + toggleKey);
             if (toggleKey === "ctrl") {
