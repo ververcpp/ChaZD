@@ -4,22 +4,24 @@ var api = {
 };
 
 var urls = {
-    dict : "https://fanyi.youdao.com/openapi.do?keyfrom=" + api.keyfrom +"&key="+ api.key +"&type=data&doctype=json&version=1.1&q=",
-    voice : "https://dict.youdao.com/dictvoice?audio="
+    dict : "http://fanyi.youdao.com/openapi.do?keyfrom=" + api.keyfrom +"&key="+ api.key +"&type=data&doctype=json&version=1.1&q=",
+    voice : "http://dict.youdao.com/dictvoice?audio=",
+    dictHttps : "https://fanyi.youdao.com/openapi.do?keyfrom=" + api.keyfrom +"&key="+ api.key +"&type=data&doctype=json&version=1.1&q=",
+    voiceHttps : "https://dict.youdao.com/dictvoice?audio=",
 };
 
 var settings = {
-    selectMode : "mouseSelect",     //划词的形式：直接划词 | Ctrl+划词
+    selectMode : "mouseSelect",     //划词的形式：直接划词 or Ctrl + 划词
     showPosition : "near",          //划词翻译结果显示的位置
-    //duration : 5,                 //翻译结果显示的时间
     toggleKey : "ctrl",
-    showTips : true,                //是否显示Tips
+    showTips : true,                //是否显示 Tips
     currentWord: "",                //当前划词查询的内容
     linkQuery: false,               //在链接上划词
     autoAudio: false,               //划词自动发音
     autoHide: false,                //自动隐藏翻译结果
     showDuration: 3,                //翻译结果显示持续时间
     defaultVoice: 1,                //划词默认发音：1--英音；2--美音
+    useHttps: false,                //是否使用 HTTPS 的接口
 };
 
 var frame = {

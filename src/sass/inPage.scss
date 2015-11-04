@@ -45,7 +45,7 @@ $gap: 10px;
 .ChaZD-result-side {
     position: fixed !important; 
     right: 10px;
-    top: 5px;
+    top: 80px;
 }
 
 .ChaZD-result-container {
@@ -62,8 +62,10 @@ $gap: 10px;
     border-radius: 4px;
     z-index: 999997;
     font-family: $font-family;
+    font-weight: normal;
     font-size: $font-size;
     position: absolute;
+    text-decoration: none;
     line-height: normal;
     @include box-shadow(0px, 0px, 20px,rgba(0, 0, 0, 0.5));
     @include animation("fade-in 0.3s ease");
@@ -121,7 +123,7 @@ $gap: 10px;
         .phonetic-container {
 
             //display: none;
-            div {
+            .uk-phonetic-container, .us-phonetic-container {
                 display: inline-block;
                 color: red;
                 margin-right: 5px;
@@ -153,7 +155,7 @@ $gap: 10px;
                 margin: 0;
                 padding: 0;
 
-                li {
+                .explains-item {
                     &:before {
                         display: none;
                     }
@@ -162,19 +164,21 @@ $gap: 10px;
                     margin: 0 0 $gap / 2 0;
                     list-style: none;
                     font-size: $font-size;
-                    span {
+                    background-color: transparent;
+
+                    .property-container {
+                        display: block;
+                        float: left;
+                        font-weight: bold;
+                        color: $text-color;
+                        margin-right: 5px;
+                    }
+
+                    .explains-item-value {
                         display: block;
                         overflow: hidden;
                     }
                 }
-            }
-
-            .property-container {
-                display: block;
-                float: left;
-                font-weight: bold;
-                color: $text-color;
-                margin-right: 5px;
             }
 
             .voice-container {

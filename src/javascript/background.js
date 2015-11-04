@@ -1,6 +1,7 @@
-function ChaZD(queryWord, wordSource, sendResponse) {
+function ChaZD(queryWord, useHttps, wordSource, sendResponse) {
     this.wordSource = wordSource;
-    var url = urls.dict + queryWord;
+    this.useHttps = useHttps;
+    var url = (useHttps ? urls.dictHttps : urls.dict) + queryWord;
     //console.log("Query url: " + url);
     var queryResult = {};
     var self = this;
@@ -13,7 +14,7 @@ function ChaZD(queryWord, wordSource, sendResponse) {
 
         if (queryWord.indexOf("-") !== -1 && !self.checkErrorCode(result.errorCode).error && !self.haveTranslation(result)) {
             //优化使用连字符的词的查询结果
-            new ChaZD(queryWord.replace(/-/g, " "), wordSource, sendResponse);
+            new ChaZD(queryWord.replace(/-/g, " "), useHttps, wordSource, sendResponse);
         } else {
             var resultObj = self.parseResult.call(self, result);
             sendResponse(resultObj);
@@ -159,7 +160,7 @@ ChaZD.prototype.parseBasicPhonetic = function (basic, queryWord) {
 };
 
 ChaZD.prototype.initVoice = function (queryWord, type) {
-    var src = urls.voice + queryWord;
+    var src = (this.useHttps ? urls.voiceHttps : urls.voice) + queryWord;
     if(type !== undefined) {
         src = src + "&type=" + type;
     }
@@ -295,22 +296,32 @@ chrome.runtime.onInstalled.addListener(
         if (details.reason === "install") {
             //console.log("[ChaZD] first install.");
             showNotification({
-                title : "感谢支持ChaZD！",
-                content : "ChaZD力求成为最简洁易用的Chrome词典扩展，欢迎提出您的意见或建议。" + 
-                    "如果觉得ChaZD还不错，记得给5星好评哦:)"
+                title : "感谢支持 ChaZD ！",
+                content : "ChaZD 力求成为最简洁易用的 Chrome 词典扩展，欢迎提出您的意见或建议。" + 
+                    "如果觉得 ChaZD 还不错，记得给5星好评哦:)"
             });
             //alert("Thank you for install my app:)");
         } else if (details.reason === "update") {
             //console.log("[ChaZD] update from version " + details.previousVersion);
             //alert("New version has updated!");
+            chrome.storage.sync.set({"showTips" : true}, function() {
+                //console.log("[ChaZD] Success update settings selectMode = mouseSelect");
+            });
             showNotification({
-                title : "ChaZD 更新到0.8.15版！",
-                content : "修改 bug"
-                          
+                title : "ChaZD 更新到0.8.19版！",
+                content : "修复若干 bug，如出现无法查词的问题，请在设置中关闭使用 HTTPS 接口"                          
             });
         }
     }
 );
+
+// chrome.contextMenus.create({"title": "在此页面禁用 ChaZD", "id": "deniedPage"});
+// chrome.contextMenus.create({"title": "在此站点禁用 ChaZD", "id": "deniedSite"});
+// chrome.contextMenus.create({"title": "管理禁用列表", "id": "deniedList"});
+// chrome.contextMenus.onClicked.addListener(function (info, tab){
+//     console.log(JSON.stringify(info));
+//     if (info.menuItemId === "deniedPage") {}
+// });
 
 chrome.storage.sync.get(null,function (items) {
     //console.log(JSON.stringify(items));
@@ -335,7 +346,7 @@ chrome.runtime.onMessage.addListener(
     function (message, sender, sendResponse) {
         //console.log("message from sender:" + JSON.stringify(message));
         //console.log("sender is " + JSON.stringify(sender));
-        new ChaZD(preprocessWord(message.queryWord), message.source, sendResponse);
+        new ChaZD(preprocessWord(message.queryWord), message.useHttps, message.source, sendResponse);
 
         return true;
 });

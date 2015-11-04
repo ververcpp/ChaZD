@@ -66,7 +66,7 @@
 .ChaZD-result-side {
   position: fixed !important;
   right: 10px;
-  top: 5px;
+  top: 80px;
 }
 
 .ChaZD-result-container {
@@ -83,8 +83,10 @@
   border-radius: 4px;
   z-index: 999997;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-weight: normal;
   font-size: 14px;
   position: absolute;
+  text-decoration: none;
   line-height: normal;
   box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.5);
   -webkit-box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.5);
@@ -136,7 +138,7 @@
   background-color: #ffffdd;
   border: none;
 }
-.ChaZD-result-container .basic-container .phonetic-container div {
+.ChaZD-result-container .basic-container .phonetic-container .uk-phonetic-container, .ChaZD-result-container .basic-container .phonetic-container .us-phonetic-container {
   display: inline-block;
   color: red;
   margin-right: 5px;
@@ -163,26 +165,27 @@
   margin: 0;
   padding: 0;
 }
-.ChaZD-result-container .basic-container .explains-container .explains-list li {
+.ChaZD-result-container .basic-container .explains-container .explains-list .explains-item {
   padding: 0px;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   margin: 0 0 5px 0;
   list-style: none;
   font-size: 14px;
+  background-color: transparent;
 }
-.ChaZD-result-container .basic-container .explains-container .explains-list li:before {
+.ChaZD-result-container .basic-container .explains-container .explains-list .explains-item:before {
   display: none;
 }
-.ChaZD-result-container .basic-container .explains-container .explains-list li span {
-  display: block;
-  overflow: hidden;
-}
-.ChaZD-result-container .basic-container .explains-container .property-container {
+.ChaZD-result-container .basic-container .explains-container .explains-list .explains-item .property-container {
   display: block;
   float: left;
   font-weight: bold;
   color: #222222;
   margin-right: 5px;
+}
+.ChaZD-result-container .basic-container .explains-container .explains-list .explains-item .explains-item-value {
+  display: block;
+  overflow: hidden;
 }
 .ChaZD-result-container .basic-container .explains-container .voice-container {
   display: none;

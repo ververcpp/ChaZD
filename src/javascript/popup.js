@@ -1,14 +1,14 @@
 var $button = document.querySelector("#search");
-var $tipsContainer = document.querySelector("#tips");
+//var $tipsContainer = document.querySelector("#tips");
 var $input = document.querySelector("#query-word");
 var $queryResultContainer = document.querySelector("#query-result");
 
 if (-1 !== window.navigator.platform.toLowerCase().indexOf("mac")) {
     document.querySelector("#ctrl-option").firstChild.nodeValue = "Command";
 }
-if (!$tipsContainer.classList.contains("unshow")){
-    $tipsContainer.classList.add("unshow");
-}
+// if (!$tipsContainer.classList.contains("unshow")){
+//     $tipsContainer.classList.add("unshow");
+// }
 
 
 function queryInPopup(queryText) {
@@ -23,10 +23,10 @@ function queryInPopup(queryText) {
     //console.log("quertText: " + queryText);
     if (queryText) {
         $input.value = queryText;
-        chrome.extension.sendMessage({queryWord: queryText, source: "popup"}, buildResult);
+        chrome.extension.sendMessage({queryWord: queryText, source: "popup", useHttps: useHttpsValue}, buildResult);
     }
     else {
-        chrome.extension.sendMessage({queryWord: $input.value, source: "popup"}, buildResult);
+        chrome.extension.sendMessage({queryWord: $input.value, source: "popup", useHttps: useHttpsValue}, buildResult);
     }
 }
 
@@ -146,6 +146,8 @@ var currentDuration = document.querySelector("#currentDuration");
 var turnOffTips = document.querySelector("#turn-off-tips");
 var tips = document.querySelector("#tips");
 var toggleKey = document.querySelector("#toggle-key");
+var useHttps = document.querySelector("#useHttps");
+var useHttpsValue = false;
 
 chrome.storage.sync.get(null, function (items) { 
     if(items.currentWord !== "") {
@@ -157,6 +159,15 @@ chrome.storage.sync.get(null, function (items) {
     } else {
         linkQuery.checked = false;
         linkQuery.nextSibling.classList.add("unactive");
+    }
+    if(items.useHttps === true) {
+        useHttps.checked = true;
+        useHttpsValue = true;
+        useHttps.nextSibling.classList.remove("unactive");
+    } else {
+        useHttps.checked = false;
+        useHttpsValue = false;
+        useHttps.nextSibling.classList.add("unactive");
     }
     if(items.autoAudio === true) {
         autoAudio.checked = true;
@@ -238,6 +249,12 @@ linkQuery.addEventListener("click", function (event) {
     chrome.storage.sync.set({"linkQuery": currentLinkQuery}, function() {
         //console.log("[ChaZD] Success update settings linkQuery = " + currentLinkQuery);
     });
+});
+
+useHttps.addEventListener("click", function (event) {
+    var currentUseHttps = useHttps.checked;
+    useHttps.nextSibling.classList.toggle("unactive");
+    chrome.storage.sync.set({"useHttps": currentUseHttps});
 });
 
 autoAudio.addEventListener("click", function (event) {

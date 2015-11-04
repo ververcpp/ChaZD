@@ -7,6 +7,47 @@
         again: 0
     };
 
+    var timeout;
+    var currentSettings = {};
+    chrome.storage.sync.get(null, function(items) {
+        for (var key in items) {
+            currentSettings[key] = items[key];
+        }
+    });
+
+    chrome.storage.onChanged.addListener(function(changes) {
+        // for (var key in changes) {
+        //     console.log("[ChaZD]Settings Update, [%s] %s => %s", key, changes[key].oldValue, changes[key].newValue);
+        // }
+        if (changes.linkQuery !== undefined) {
+            currentSettings.linkQuery = changes.linkQuery.newValue;
+        }
+        if (changes.useHttps !== undefined) {
+            currentSettings.useHttps = changes.useHttps.newValue;
+        }
+        if (changes.autoAudio !== undefined) {
+            currentSettings.autoAudio = changes.autoAudio.newValue;
+        }
+        if (changes.defaultVoice !== undefined) {
+            currentSettings.defaultVoice = changes.defaultVoice.newValue;
+        }
+        if (changes.selectMode !== undefined) {
+            currentSettings.selectMode = changes.selectMode.newValue;
+        }
+        if (changes.toggleKey !== undefined) {
+            currentSettings.toggleKey = changes.toggleKey.newValue;
+        }
+        if (changes.autoHide !== undefined) {
+            currentSettings.autoHide = changes.autoHide.newValue;
+        }
+        if (changes.showDuration !== undefined) {
+            currentSettings.showDuration = changes.showDuration.newValue;
+        }
+        if (changes.showPosition !== undefined) {
+            currentSettings.showPosition = changes.showPosition.newValue;
+        }
+    });
+
     var queryInPage = function(event) {
         var selection = window.getSelection && window.getSelection();
         if(selection && selection.rangeCount > 0) {
@@ -17,7 +58,12 @@
                 return;
             }
             
-            if (selectText === "" || !(/[a-zA-Z\s]/.test(selectText))) {return;}
+            if (selectText === "" || !(/^[^\u4e00-\u9fa5]+$/.test(selectText))) {return;}
+            var haveResult = document.documentElement.querySelectorAll(".ChaZD-result-container");
+            for (var i = 0, len = haveResult.length; i < len; i++) {
+                if (haveResult[i].getAttribute("data-text").toLowerCase() === selectText.toLowerCase()){return;}
+            }
+            ////////if (currentQueryWord !== "" && selectText === currentQueryWord) {return;}
             chrome.storage.sync.set({"currentWord" : selectText}, function() {
                 //console.log("[ChaZD] Success update settings currentWord = " + selectText);
             });
@@ -29,47 +75,36 @@
                     preSelection[key] = selectRange[key];
                 }              
             }
-            //console.log("[ChaZD]Selected Text at %s : %s", location.href, selectText);
-            var currentSettings = {};
-            chrome.storage.sync.get(null, function(items) {
-                //console.log("[Settings after select]");
-                for (var key in items) {
-                    currentSettings[key] = items[key];
-                    //console.log("   %s : %s", key, currentSettings[key]);
-                }
-                //var duration = currentSettings["duration"]
-                if (currentSettings.showPosition == "side") {
-                    //console.log("in 1");
-                    showResultSide(selectText);
-                }
-                if (currentSettings.showPosition == "near") {
-                    //console.log("in 2");
-                    showResultNear(selectText, selectRange, event);
-                }
-            });
+            if (currentSettings.showPosition === "side") {
+                //console.log("in 1");
+                showResultSide(selectText, currentSettings.useHttps);
+            }
+            if (currentSettings.showPosition === "near") {
+                //console.log("in 2");
+                showResultNear(selectText, currentSettings.useHttps, selectRange, event);
+            }
         }       
     };
 
-    var timeout;
-
-    var showResultSide = function (text) {
+    var showResultSide = function (text, useHttps) {
         //if(isExist(text)) return;
-        var $resultSideContainer = makeResultContainer(text);
+        var $resultSideContainer = makeResultContainer(text, useHttps);
         $resultSideContainer.classList.add("ChaZD-result-side");
         document.documentElement.appendChild($resultSideContainer);
 
-        if (autoHide) {
+        if (currentSettings.autoHide) {
             timeout = setTimeout(function () {
                 if (document.querySelector(".ChaZD-result-container")) {
                     document.documentElement.removeChild($resultSideContainer);
+                    ////////currentQueryWord = "";
                 }
-            }, 1000 * showDuration);
+            }, 1000 * currentSettings.showDuration);
         }
     };
 
-    var showResultNear = function (text, range, event) {
+    var showResultNear = function (text, useHttps, range, event) {
         //if(isExist(text)) return;
-        var resultNearContainer = makeResultContainer(text);
+        var resultNearContainer = makeResultContainer(text, useHttps);
         var arrowMain = makeArrowDiv();
         document.documentElement.appendChild(resultNearContainer);
         document.documentElement.appendChild(arrowMain);
@@ -150,13 +185,14 @@
             }
         }
 
-        if (autoHide) {
+        if (currentSettings.autoHide) {
             timeout = setTimeout(function () {
                 if (document.querySelector(".ChaZD-result-container") && document.querySelector(".ChaZD-arrow-main")) {
                     document.documentElement.removeChild(resultNearContainer);
                     document.documentElement.removeChild(arrowMain);
+                    ////////currentQueryWord = "";
                 }
-            }, 1000 * showDuration);
+            }, 1000 * currentSettings.showDuration);
         }
         // var t = setTimeout(function () {
         //     document.body.removeChild(resultNearContainer);
@@ -178,7 +214,7 @@
         return arrowDivMain;
     };
 
-    var makeResultContainer = function (text) {
+    var makeResultContainer = function (text, useHttps) {
         var $resultContainer = document.createElement("div");
         $resultContainer.classList.add("ChaZD-result-container");
         $resultContainer.setAttribute("data-text", text);
@@ -188,7 +224,8 @@
         $resultContainer.appendChild($searchingNode);
         chrome.runtime.sendMessage({
             queryWord: text,
-            source: "select"
+            source: "select",
+            useHttps: useHttps
         }, function(response) {
             var resultObj = response;
             $searchingNode.innerHTML = "";
@@ -234,10 +271,10 @@
         var src = voice.getAttribute("data-src");
         //console.log("voice src: [] " + src);
         var audioBlock = document.createElement("audio");
-        audioBlock.setAttribute("src", src + "&type=" + defaultVoice);
+        audioBlock.setAttribute("src", src + "&type=" + currentSettings.defaultVoice);
         //audioBlock.setAttribute("ended", "this.load()");
         voice.appendChild(audioBlock);
-        if (autoAudio === true) {
+        if (currentSettings.autoAudio === true) {
             audioBlock.play();
         }
         audioBlock.addEventListener("ended", function (event) {
@@ -259,55 +296,7 @@
         }
         return false;
     }
-
-    var noSelect = true;
-    var useCtrl = false;
-    var toggleKey = "ctrl";
-    var linkQuery = false;
-    var autoAudio = false;
-    var autoHide = false;
-    var showDuration = 3;
-    var defaultVoice = 1;
-    chrome.storage.sync.get(null, function(items) {
-        noSelect = (items.selectMode === "noSelect") ? true : false;
-        useCtrl = (items.selectMode === "useCtrl") ? true : false;
-        toggleKey = items.toggleKey;
-        linkQuery = items.linkQuery;
-        autoAudio = items.autoAudio;
-        autoHide = items.autoHide;
-        showDuration = items.showDuration;
-        defaultVoice = items.defaultVoice;
-    });
-
-    chrome.storage.onChanged.addListener(function(changes) {
-        // for (var key in changes) {
-        //     console.log("[ChaZD]Settings Update, [%s] %s => %s", key, changes[key].oldValue, changes[key].newValue);
-        // }
-        if (changes.linkQuery !== undefined) {
-            linkQuery = changes.linkQuery.newValue;
-        }
-        if (changes.autoAudio !== undefined) {
-            autoAudio = changes.autoAudio.newValue;
-        }
-        if (changes.defaultVoice !== undefined) {
-            defaultVoice = changes.defaultVoice.newValue;
-        }
-        if (changes.selectMode !== undefined) {
-            var selectMode = changes.selectMode.newValue;
-            noSelect = (selectMode === "noSelect") ? true : false;
-            useCtrl = (selectMode === "useCtrl") ? true : false;
-        }
-        if (changes.toggleKey !== undefined) {
-            toggleKey = changes.toggleKey.newValue;
-        }
-        if (changes.autoHide !== undefined) {
-            autoHide = changes.autoHide.newValue;
-        }
-        if (changes.showDuration !== undefined) {
-            showDuration = changes.showDuration.newValue;
-        }
-    });
-
+    
     var classNameCollection = ["ChaZD-result-container", "title-container", "title-word", "title-translation", "basic-container", "phonetic-container", "explains-container", "explains-container", "explains-list", "property-container", "explains-item", "voice-container", "us-phonetic-container", "uk-phonetic-container", "web-explains-container", "web-explains-list", "web-key", "explains-item-value", "web-value"];
 
     document.documentElement.addEventListener("mousedown", function(event) {
@@ -337,6 +326,7 @@
             }
         }
         chrome.storage.sync.set({"currentWord" : ""});
+        ////////currentQueryWord = "";
         //clearSelection(event);
     });
 
@@ -349,28 +339,29 @@
         if (chazdArrow) {
             document.documentElement.removeChild(chazdArrow);
         }
+        ////////currentQueryWord = "";
     });
     
     var queryEvent = function (event) {
         //console.log("[ChaZD] current useCtrl: " + useCtrl);
-        if (noSelect) {return;}
-        if (useCtrl) {
+        if (currentSettings.selectMode === "noSelect") {return;}
+        if (currentSettings.selectMode === "useCtrl") {
             //console.log("current togglekey: " + toggleKey);
-            if (toggleKey === "ctrl") {
+            if (currentSettings.toggleKey === "ctrl") {
                 //console.log("[ChaZD] In Ctrl");
                 if (!event.ctrlKey && !event.metaKey) {
                     //console.log("[ChaZD] Aho~~~");
                     preSelection.again = 0;
                     return;
                 }
-            } else if (toggleKey === "alt") {
+            } else if (currentSettings.toggleKey === "alt") {
                 //console.log("[ChaZD] In Alt");
                 if (!event.altKey) {
                     preSelection.again = 0;
                     //console.log("[ChaZD] Aho~~~");
                     return;
                 }
-            } else if (toggleKey === "shift") {
+            } else if (currentSettings.toggleKey === "shift") {
                 //console.log("[ChaZD] In Shift");
                 if (!event.shiftKey) {
                     preSelection.again = 0;
@@ -380,18 +371,12 @@
             }
         }
         queryInPage(event);
-        // var selectVoice = null
-        // if(selectVoice = document.querySelector(".voice-container")) {
-        //     selectVoice.addEventListener("click", function(event) {
-        //         selectVoice.firstChild.play();
-        //     })
-        // }
     };
 
     var link = null;
 
     var focusLink = function (event) {
-        if (linkQuery) {
+        if (currentSettings.linkQuery) {
             //event.stopPropagation();
             //console.log("focusLink");
             link = event.target;
@@ -405,7 +390,7 @@
     };
 
     var blurLink = function (event) {
-        if (linkQuery) {
+        if (currentSettings.linkQuery) {
             //event.stopPropagation();
             if (link && link.classList.contains("ChaZD-link")) {
                 enableLink(event, true);
@@ -432,7 +417,7 @@
     };
 
     var clearSelection = function (event) {
-        if (linkQuery && event.shiftKey) {
+        if (currentSettings.linkQuery && event.shiftKey) {
             window.getSelection().empty();
         }
     };
