@@ -8,45 +8,6 @@
     };
 
     var timeout;
-    var currentSettings = {};
-    chrome.storage.sync.get(null, function(items) {
-        for (var key in items) {
-            currentSettings[key] = items[key];
-        }
-    });
-
-    chrome.storage.onChanged.addListener(function(changes) {
-        // for (var key in changes) {
-        //     console.log("[ChaZD]Settings Update, [%s] %s => %s", key, changes[key].oldValue, changes[key].newValue);
-        // }
-        if (changes.linkQuery !== undefined) {
-            currentSettings.linkQuery = changes.linkQuery.newValue;
-        }
-        if (changes.useHttps !== undefined) {
-            currentSettings.useHttps = changes.useHttps.newValue;
-        }
-        if (changes.autoAudio !== undefined) {
-            currentSettings.autoAudio = changes.autoAudio.newValue;
-        }
-        if (changes.defaultVoice !== undefined) {
-            currentSettings.defaultVoice = changes.defaultVoice.newValue;
-        }
-        if (changes.selectMode !== undefined) {
-            currentSettings.selectMode = changes.selectMode.newValue;
-        }
-        if (changes.toggleKey !== undefined) {
-            currentSettings.toggleKey = changes.toggleKey.newValue;
-        }
-        if (changes.autoHide !== undefined) {
-            currentSettings.autoHide = changes.autoHide.newValue;
-        }
-        if (changes.showDuration !== undefined) {
-            currentSettings.showDuration = changes.showDuration.newValue;
-        }
-        if (changes.showPosition !== undefined) {
-            currentSettings.showPosition = changes.showPosition.newValue;
-        }
-    });
 
     var queryInPage = function(event) {
         var selection = window.getSelection && window.getSelection();
@@ -224,21 +185,32 @@
         $resultContainer.appendChild($searchingNode);
         chrome.runtime.sendMessage({
             queryWord: text,
-            source: "select",
-            useHttps: useHttps
+            source: "select"
         }, function(response) {
             var resultObj = response;
             $searchingNode.innerHTML = "";
-            if (resultObj.validMessage === "query success") {
-
+            if (resultObj.Code === 0) {
                 $resultContainer.innerHTML = resultObj.titleBlock;
-
                 var singleVoiceButton = $resultContainer.querySelector(".voice-container");
+                var buildVoice = function (voice) {
+                    var src = voice.getAttribute("data-src");
+                    var audioBlock = document.createElement("audio");
+                    if(currentSettings.defaultVoice){
+                        src += "&type=" + currentSettings.defaultVoice;
+                    }
+                    audioBlock.setAttribute("src", src);
+                    voice.appendChild(audioBlock);
+                    if (currentSettings.autoAudio === true) {
+                        audioBlock.play();
+                    }
+                    audioBlock.addEventListener("ended", function (event) {
+                        this.load();
+                    });
+                    voice.addEventListener("click", function (event) {
+                        audioBlock.play();
+                    });
+                }
                 buildVoice(singleVoiceButton);
-                
-                //console.log("inner onclick:" + singleVoiceButton.onclick);
-                //console.log(document.querySelector(".voice-container") === singleVoiceButton);
-                
                 var temp = document.createElement("div");
                 if (resultObj.basicBlock) {
                     temp.innerHTML = resultObj.basicBlock;
@@ -254,38 +226,17 @@
                     $resultContainer.innerHTML = "╮(╯▽╰)╭划词君无能为力啊<br> 还是右键问问谷歌君吧=>";
                 }
             } else {
-                if (resultObj.errorCode == 20) {
+                if (resultObj.Code == 20) {
                     $resultContainer.innerHTML = "<p>这段文字太长，词典君无能为力了（┬_┬） <br><br>试试短一点的吧~</p>";
-                } else if (resultObj.errorCode == 40) {
+                } else if (resultObj.Code == 40) {
                     $resultContainer.innerHTML = "<p>对不起，这段文字太高深了，请饶过词典君吧（┬_┬）</p>";
                 } else {
                     $resultContainer.innerHTML = "<p>词典君罢工啦（┬_┬）<br><br> 是不是网络不太好？<br><br> 稍后再试一次吧</p>";
-                }                
+                }
             }
         });
-
         return $resultContainer;
     };
-
-    function buildVoice(voice) {
-        var src = voice.getAttribute("data-src");
-        //console.log("voice src: [] " + src);
-        var audioBlock = document.createElement("audio");
-        audioBlock.setAttribute("src", src + "&type=" + currentSettings.defaultVoice);
-        //audioBlock.setAttribute("ended", "this.load()");
-        voice.appendChild(audioBlock);
-        if (currentSettings.autoAudio === true) {
-            audioBlock.play();
-        }
-        audioBlock.addEventListener("ended", function (event) {
-            //console.log("loading src: " + this.getAttribute("src"));
-            this.load();
-        });
-        voice.addEventListener("click", function (event) {
-            //console.log("playing src: " + audioBlock.getAttribute("src"));
-            audioBlock.play();
-        });
-    }
 
     function isExist(newRange, oldRange) {
         if (newRange.top === oldRange.top && 

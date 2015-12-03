@@ -1,32 +1,35 @@
 {
   "manifest_version": 2,
-
-  "name": "ChaZD",
-  "version": "0.8.19",
-  "description": "ChaZD 查字典，简洁易用的英汉字典扩展程序，支持划词哦:)",
+  "name": "好学单词",
+  "version": "0.8.20",
+  "description": "好学单词，简洁易用的英汉字典扩展程序，支持划词哦:)",
 
   "permissions": [
     "https://dict.youdao.com/*",
     "https://fanyi.youdao.com/*",
     "http://dict.youdao.com/*",
     "http://fanyi.youdao.com/*",
+    "http://dict.xyuu.com.cn/*",
+    "http://*.shanbay.com/*",
     "contextMenus",
     "tabs",
     "storage",
     "notifications"
   ],
-
+  //"content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self';media-src '*'",
   "options_page": "options.html",
 
   "background": {
       "persistent": true,
-      "scripts": [ "public/js/utility.min.js", "public/js/background.min.js" ]
+      //"scripts": [ "public/js/utility.min.js", "public/js/background.min.js" ]
+      "scripts": [ "src/javascript/utility.js", "src/javascript/background.js" ]
    },
 
   "content_scripts": [ {
     "all_frames": true,
     "css": ["public/css/inPage.min.css"],
-    "js": ["public/js/utility.min.js", "public/js/selection.min.js"],
+    //"js": ["public/js/utility.min.js", "public/js/selection.min.js"],
+    "js": ["src/javascript/utility.js", "src/javascript/selection.js"],
     "matches": ["<all_urls>"]
       
   } ],
