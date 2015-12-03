@@ -21,15 +21,15 @@
 
   "background": {
       "persistent": true,
-      //"scripts": [ "public/js/utility.min.js", "public/js/background.min.js" ]
-      "scripts": [ "src/javascript/utility.js", "src/javascript/background.js" ]
+      "scripts": [ "public/js/utility.min.js", "public/js/background.min.js" ]
+      //"scripts": [ "src/javascript/utility.js", "src/javascript/background.js" ]
    },
 
   "content_scripts": [ {
     "all_frames": true,
     "css": ["public/css/inPage.min.css"],
-    //"js": ["public/js/utility.min.js", "public/js/selection.min.js"],
-    "js": ["src/javascript/utility.js", "src/javascript/selection.js"],
+    "js": ["public/js/utility.min.js", "public/js/selection.min.js"],
+    //"js": ["src/javascript/utility.js", "src/javascript/selection.js"],
     "matches": ["<all_urls>"]
       
   } ],
