@@ -377,3 +377,10 @@ toggleKey.onchange = function (event) {
 //     currentDuration.innerHTML = event.target.value;
 //     updateSetting("duration", event.target.value);  
 // })
+
+//在popup页内 Enter键 查询选中部分
+document.addEventListener('keyup',function(e){
+    if(document.activeElement.tagName=="BODY" && e.which==13){
+        queryInPopup(window.getSelection().toString());
+    }
+});
