@@ -1,6 +1,8 @@
 var $button = document.querySelector("#search");
 //var $tipsContainer = document.querySelector("#tips");
 var $input = document.querySelector("#query-word");
+var $historyList = document.querySelector("#query-history");
+var queryHistory=[];
 var $queryResultContainer = document.querySelector("#query-result");
 
 if (-1 !== window.navigator.platform.toLowerCase().indexOf("mac")) {
@@ -48,6 +50,21 @@ var buildResult = function(response) {
         var i, len;
         for (i = 0, len = voiceCollection.length; i < len; i++) {
             buildVoice(voiceCollection[i]);
+        }
+
+        //若有结果,无重复地写入历史记录
+        if(resultObj.haveTranslation && resultObj.haveWebTranslation) {
+            for (i = 0,len=queryHistory.length; i < len; i++) {
+                if ($input.value == queryHistory[i]) {
+                    break;
+                }
+            }
+            if(i==len){
+                //只保留最近的6条记录
+                if (queryHistory.unshift($input.value) > 6) {
+                    queryHistory.pop();
+                }
+            }
         }
     } else {
         if (resultObj.errorCode == 20) {
@@ -383,9 +400,57 @@ document.addEventListener('keyup',function(e){
     if(document.activeElement.tagName=="BODY" && e.which==13){
         var selection=window.getSelection().toString();
         if(selection.length>0) {
+            $historyList.innerHTML = "";
             queryInPopup(selection);
         }else{
             $input.focus();
+        }
+    }
+});
+
+/**
+ * 简单的历史记录功能
+ * 焦点在输入框时,按上下箭头显示历史列表供选择,按其他键移除列表
+ * 目前只保存本次会话的历史
+ */
+$input.addEventListener('keyup',function(e){
+    if(queryHistory.length>0) {
+        if (e.which == 38 || e.which == 40) {
+            e.preventDefault();
+            e.stopPropagation();
+            if ($historyList.children.length==0) {
+                for (var i = 0; i < queryHistory.length; i++) {
+                    $historyList.appendChild(document.createElement("LI").appendChild(document.createTextNode(queryHistory[i])).parentNode);
+                }
+                return;
+            }
+            var cur=$historyList.querySelector(".cur");
+            if (e.which == 38) {
+                if (cur == null) {
+                    cur = $historyList.firstElementChild;
+                    cur.className = "cur";
+                }
+                cur.className = "";
+                cur = cur.previousElementSibling;
+                if (cur == null) {
+                    cur = $historyList.lastElementChild;
+                }
+                cur.className = "cur";
+            } else {
+                if (cur == null) {
+                    cur = $historyList.lastElementChild;
+                    cur.className = "cur";
+                }
+                cur.className = "";
+                cur = cur.nextElementSibling;
+                if (cur == null) {
+                    cur = $historyList.firstElementChild;
+                }
+                cur.className = "cur";
+            }
+            queryInPopup(cur.innerHTML);
+        } else {
+            $historyList.innerHTML = "";
         }
     }
 });

@@ -169,7 +169,16 @@ ul {
   font-family: "YDdict-Icon";
 }
 
-
+#query-history{
+  margin-left:20px;
+}
+#query-history li{
+  border: inset transparent;
+  color: #999;
+}
+#query-history li.cur{
+  border-color:#faf8ef;
+}
 
 /*Result Block*/
 .result-container {
