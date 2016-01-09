@@ -378,9 +378,14 @@ toggleKey.onchange = function (event) {
 //     updateSetting("duration", event.target.value);  
 // })
 
-//在popup页内 Enter键 查询选中部分
+//在popup页内 Enter键 查询选中部分 如果没有选中部分,$input请求焦点
 document.addEventListener('keyup',function(e){
     if(document.activeElement.tagName=="BODY" && e.which==13){
-        queryInPopup(window.getSelection().toString());
+        var selection=window.getSelection().toString();
+        if(selection.length>0) {
+            queryInPopup(selection);
+        }else{
+            $input.focus();
+        }
     }
 });
