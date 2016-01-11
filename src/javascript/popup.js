@@ -395,9 +395,11 @@ toggleKey.onchange = function (event) {
 //     updateSetting("duration", event.target.value);  
 // })
 
-//在popup页内 Enter键 查询选中部分 如果没有选中部分,$input请求焦点
+/**
+ * popup页 快捷键绑定
+ */
 document.addEventListener('keyup',function(e){
-    if(document.activeElement.tagName=="BODY" && e.which==13){
+    if(document.activeElement.tagName=="BODY" && e.which==13){  //Enter     查询选中部分 如果没有选中部分,$input请求焦点
         var selection=window.getSelection().toString();
         if(selection.length>0) {
             $historyList.innerHTML = "";
@@ -405,6 +407,9 @@ document.addEventListener('keyup',function(e){
         }else{
             $input.focus();
         }
+    }else if(e.which==18){  //Alt+Enter     $input清空内容并请求焦点
+        $input.value = '';
+        $input.focus();
     }
 });
 
