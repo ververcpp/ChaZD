@@ -34,7 +34,7 @@ var buildResult = function(response) {
     //alert("response from xhr: " + JSON.stringify(response));
     var resultObj = response;
     var resultBlock = "";
-    if (resultObj.Code == 0) {
+    if (resultObj.Code === 0) {
         resultBlock += resultObj.titleBlock;
         if (resultObj.basicBlock !== undefined) {
             resultBlock += resultObj.basicBlock;
@@ -55,7 +55,7 @@ var buildResult = function(response) {
             voice.addEventListener("click", function (event) {
                 audioBlock.play();
             });
-        }
+        };
         var i, len;
         for (i = 0, len = voiceCollection.length; i < len; i++) {
             buildVoice(voiceCollection[i]);

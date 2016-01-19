@@ -209,7 +209,7 @@
                     voice.addEventListener("click", function (event) {
                         audioBlock.play();
                     });
-                }
+                };
                 buildVoice(singleVoiceButton);
                 var temp = document.createElement("div");
                 if (resultObj.basicBlock) {
