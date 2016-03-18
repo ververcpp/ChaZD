@@ -2,12 +2,14 @@ function ajax(method,url,data,cb,before){
     var xhr = new XMLHttpRequest();
     xhr.open(method, url, true);
     xhr.onreadystatechange = function(){
-        if (xhr.readyState != 4)
+        if (xhr.readyState != 4) {
             return;
+        }
         cb(xhr);
     };
-    if(before!=undefined)
+    if(before !== undefined) {
         before(xhr);
+    }
     xhr.send(data);
 }
 
@@ -155,7 +157,7 @@ var youdao = function(){
     self.shortWord = function (longWord) {
         return longWord.slice(0, longWord.lastIndexOf(" ", 50)).concat(" ...");
     };
-    self.getVoice = function(result,type){
+    self.getVoice = function(result, type){
         var src = (currentSettings.useHttps ? urls.voiceHttps : urls.voice) + result.query;
         if(type !== undefined) {
             src = src + "&type=" + type;
@@ -168,7 +170,7 @@ var youdao = function(){
         var voiceContainer = self.initVoice(self.getVoice(result));
         queryWord = queryWord.length >= 50 && self.wordSource == "select" ? self.shortWord(queryWord) : queryWord;
         var titleWord = fmt(frame.titleWord, queryWord, voiceContainer);
-        var titleTranslation = translation?fmt(frame.titleTranslation, translation.toString()):'';
+        var titleTranslation = translation?fmt(frame.titleTranslation, translation.toString()): "";
         return {
             titleBlock : fmt(frame.titleContainer, titleWord,  titleTranslation, queryWord.length >=50 ? "long-text" : "")
         };
@@ -310,6 +312,8 @@ var shanbay = function(){
     self.learn = "http://www.shanbay.com/api/v1/bdc/learning/";
     self.login = "http://www.shanbay.com/accounts/login/";
     youdao.call(this);
+
+    /*jshint camelcase: false */
     self.getVoice = function(result,type){
         var basic = result.basic;
         var src = basic.audio;
@@ -333,8 +337,8 @@ var shanbay = function(){
                 return fmt(frame.phoneticContainer, ukPhoneticContainer, usPhoneticContainer);
             }
         }
-        var usVoice = self.initVoice(self.getVoice(result));
-        var phoneticContainer = fmt(frame.usPhoneticContainer, "[" + basic.phonetic + "]" + usVoice);
+        var voice = self.initVoice(self.getVoice(result));
+        var phoneticContainer = fmt(frame.usPhoneticContainer, "[" + basic.phonetic + "]" + voice);
         return fmt(frame.phoneticContainer, phoneticContainer, "");
     };
     self.parseBasicExplains = function (result) {
@@ -342,7 +346,7 @@ var shanbay = function(){
         var definition = basic.definition;
         var i;
         var explainsContent = "";
-        var explains = definition.split('\n');
+        var explains = definition.split("\n");
         for (i = 0; i < explains.length; i++) {
             var currentExplain = explains[i];
             var haveProperty = currentExplain.indexOf(".");
@@ -357,10 +361,11 @@ var shanbay = function(){
     };
     self.Query = function(queryWord, wordSource, sendResponse) {
         var url = self.dict + queryWord;
+        /*jshint camelcase: false */
         ajax("GET", url, null, function (xhr) {
             var result = JSON.parse(xhr.responseText);
             var data = result.data;
-            if (result.status_code==0) {
+            if (result.status_code === 0) {
                 data = {basic:{
                     pronunciations:data.pronunciations,
                     phonetic:data.pron,
@@ -379,7 +384,7 @@ var shanbay = function(){
                     ajax("POST", self.learn, JSON.stringify(data), function (xhr) {
                         var result = JSON.parse(xhr.responseText);
                         if(xhr.status == 401){
-                            if (confirm(result.msg+'\n'+'你选择了自动加入生词本,但你没有登陆扇贝网或登陆已失效，是否现在登陆?')){
+                            if (confirm(result.msg+"\n你选择了自动加入生词本,但你没有登陆扇贝网或登陆已失效，是否现在登陆?")){
                                 chrome.tabs.create({ url: self.login });
                             }else{
                                 currentSettings.autoLearn = false;
@@ -389,12 +394,12 @@ var shanbay = function(){
                         xhr.setRequestHeader("Content-Type", "application/json");
                     });
                 }
-            }else if(result.status_code==1){
+            } else if (result.status_code === 1) {
                 var y = new youdao();
                 y.Query(queryWord, wordSource, sendResponse);
             }
         });
-    }
+    };
 };
 
 var xyuu = function(){
