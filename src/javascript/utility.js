@@ -10,6 +10,12 @@ var urls = {
     voiceHttps : "https://dict.youdao.com/dictvoice?audio=",
 };
 
+var templateUrls = {
+    dict : "http://fanyi.youdao.com/openapi.do?keyfrom=#{2}&key=#{1}&type=data&doctype=json&version=1.1&q=",
+    voice : "http://dict.youdao.com/dictvoice?audio=",
+    dictHttps : "https://fanyi.youdao.com/openapi.do?keyfrom=#{2}&key=#{1}&type=data&doctype=json&version=1.1&q=",
+    voiceHttps : "https://dict.youdao.com/dictvoice?audio=",
+};
 var settings = {
     selectMode : "mouseSelect",     //划词的形式：直接划词 or Ctrl + 划词
     showPosition : "near",          //划词翻译结果显示的位置
@@ -22,6 +28,8 @@ var settings = {
     showDuration: 3,                //翻译结果显示持续时间
     defaultVoice: 1,                //划词默认发音：1--英音；2--美音
     useHttps: false,                //是否使用 HTTPS 的接口
+    userkey:undefined,              //用户自定义key
+    userkeyfrom:undefined           //用户自定义keyfrom
 };
 
 var frame = {

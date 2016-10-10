@@ -1,7 +1,9 @@
 function ChaZD(queryWord, useHttps, wordSource, sendResponse) {
     this.wordSource = wordSource;
     this.useHttps = useHttps;
-    var url = (useHttps ? urls.dictHttps : urls.dict) + queryWord;
+    var basicurl = getbasicurl(useHttps);
+    //console.log(basicurl);
+    var url = basicurl + queryWord;
     //console.log("Query url: " + url);
     var queryResult = {};
     var self = this;
@@ -22,7 +24,21 @@ function ChaZD(queryWord, useHttps, wordSource, sendResponse) {
     };
     xhr.send();
 }
-
+function getbasicurl(useHttps) {
+    var thisurl = (useHttps ? urls.dictHttps : urls.dict);
+    var chazduserkey = localStorage.getItem("chazduserkey");
+    var chazduserkeyfrom = localStorage.getItem("chazduserkeyfrom");
+    //console.log(chazduserkey,chazduserkeyfrom);
+    if(chazduserkey && chazduserkey !== "" && chazduserkeyfrom && chazduserkeyfrom !== "") {
+        if (useHttps) {
+            thisurl = fmt(templateUrls.dictHttps, chazduserkey, chazduserkeyfrom);
+        } else {
+            thisurl = fmt(templateUrls.dict, chazduserkey, chazduserkeyfrom);
+        }   
+    }   
+    
+    return thisurl;
+}
 ChaZD.prototype.checkErrorCode = function (errorCode) {
     var response = {
         "message": "",
