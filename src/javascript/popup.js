@@ -130,7 +130,7 @@ function totalHeight(className) {
     return sum + 10;
 }
 
-var blockHeight = totalHeight("top-menu") + totalHeight("sub-menu") + totalHeight("carved") + 32;
+var blockHeight = totalHeight("top-menu") + totalHeight("sub-menu") + totalHeight("carved") + 32 + 56;
 var linkQuery = document.querySelector("#linkQuery");
 var noSelect = document.querySelector("#noSelect");
 var mouseSelect = document.querySelector("#mouseSelect");
