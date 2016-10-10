@@ -395,12 +395,12 @@ document.addEventListener("keyup",function(e){
 userkey.addEventListener("change", function(event){
     localStorage.setItem("chazduserkey",this.value);
     chrome.storage.local.set({"userkey" : this.value}, function() {
-        console.log("[ChaZD] Success update settings userkey = " + this.value);
+        //console.log("[ChaZD] Success update settings userkey = " + this.value);
     });
 });
 userkeyfrom.addEventListener("change", function(event){
     localStorage.setItem("chazduserkeyfrom",this.value);
     chrome.storage.local.set({"userkeyfrom" : this.value}, function() {
-        console.log("[ChaZD] Success update settings userkeyfrom = " + this.value);
+        //console.log("[ChaZD] Success update settings userkeyfrom = " + this.value);
     });
 });

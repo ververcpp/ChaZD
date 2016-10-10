@@ -1,6 +1,6 @@
 var api = {
-    key: 2078867566,
-    keyfrom : "lytofbblogger"
+    key: 1116151381,
+    keyfrom : "youdaocidian"
 };
 
 var urls = {
