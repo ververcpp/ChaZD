@@ -28,15 +28,6 @@ module.exports = function(grunt) {
             }
         },
 
-        jshint: {
-            all: {
-                src: ["src/**/*.js", "Gruntfile.js"],
-
-                options: {
-                    jshintrc: true
-                }
-            }
-        },
 
         uglify: {
             options: {
@@ -83,7 +74,7 @@ module.exports = function(grunt) {
 
     require("load-grunt-tasks")(grunt);
 
-    grunt.registerTask("default", ["sass", "cssmin", "jshint", "uglify", "copy"]);
+    grunt.registerTask("default", ["sass", "cssmin",  "uglify", "copy"]);
     grunt.registerTask("check", ["jshint"]);
     grunt.registerTask("debug", ["default", "watch"]);
 };

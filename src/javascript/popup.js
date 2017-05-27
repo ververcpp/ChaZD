@@ -50,13 +50,13 @@ var buildResult = function(response) {
             buildVoice(voiceCollection[i]);
         }
     } else {
-        if (resultObj.errorCode == 20) {
+        if (resultObj.errorCode == 103) {
             $queryResultContainer.innerHTML = "<p>这段文字太长，词典君无能为力了（┬_┬） <br><br>试试短一点的吧~</p>";
-        } else if (resultObj.errorCode == 40) {
+        } else if (resultObj.errorCode == 102) {
             $queryResultContainer.innerHTML = "<p>对不起，这段文字太高深了，请饶过词典君吧（┬_┬）</p>";
         } else {
             $queryResultContainer.innerHTML = "<p>词典君罢工啦（┬_┬）<br><br> 是不是网络不太好？<br><br> 稍后再试一次吧</p>";
-        } 
+        }
     }
 };
 
@@ -149,7 +149,7 @@ var toggleKey = document.querySelector("#toggle-key");
 var useHttps = document.querySelector("#useHttps");
 var useHttpsValue = false;
 
-chrome.storage.sync.get(null, function (items) { 
+chrome.storage.sync.get(null, function (items) {
     if(items.currentWord !== "") {
         queryInPopup(items.currentWord);
     }
@@ -265,7 +265,7 @@ autoAudio.addEventListener("click", function (event) {
         autoAudio.nextSibling.classList.add("unactive");
     }
     chrome.storage.sync.set({"autoAudio": currentAutoAudio}, function() {
-        //console.log("[ChaZD] Success update settings autoAudio = " + currentAutoAudio);        
+        //console.log("[ChaZD] Success update settings autoAudio = " + currentAutoAudio);
     });
 });
 
@@ -273,7 +273,7 @@ defaultUk.addEventListener("click", function (event) {
     defaultUk.nextSibling.classList.remove("unactive");
     defaultUs.nextSibling.classList.add("unactive");
     chrome.storage.sync.set({"defaultVoice": 1}, function() {
-        //console.log("[ChaZD] Success update settings defaultVoice = 1");   
+        //console.log("[ChaZD] Success update settings defaultVoice = 1");
     });
 });
 
@@ -281,7 +281,7 @@ defaultUs.addEventListener("click", function (event) {
     defaultUs.nextSibling.classList.remove("unactive");
     defaultUk.nextSibling.classList.add("unactive");
     chrome.storage.sync.set({"defaultVoice": 2}, function() {
-        //console.log("[ChaZD] Success update settings defaultVoice = 2");   
+        //console.log("[ChaZD] Success update settings defaultVoice = 2");
     });
 });
 
@@ -310,7 +310,7 @@ mouseSelect.addEventListener("click", function (event) {
 
     noSelect.nextSibling.classList.add("unactive");
     mouseSelect.nextSibling.classList.remove("unactive");
-    useCtrl.nextSibling.classList.add("unactive");    
+    useCtrl.nextSibling.classList.add("unactive");
     chrome.storage.sync.set({"selectMode" : "mouseSelect"}, function() {
         //console.log("[ChaZD] Success update settings selectMode = mouseSelect");
     });
@@ -365,7 +365,7 @@ showDuration.addEventListener("input", function (event) {
     chrome.storage.sync.set({"showDuration" : showDuration.value}, function() {
         //console.log("[ChaZD] Success update settings toggleKey = " + this.value);
     });
-}); 
+});
 
 toggleKey.onchange = function (event) {
     chrome.storage.sync.set({"toggleKey" : this.value}, function() {
@@ -375,7 +375,7 @@ toggleKey.onchange = function (event) {
 
 // showDuration.addEventListener("onclick", function (event) {
 //     currentDuration.innerHTML = event.target.value;
-//     updateSetting("duration", event.target.value);  
+//     updateSetting("duration", event.target.value);
 // })
 
 //在popup页内 Enter键 查询选中部分
