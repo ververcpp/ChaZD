@@ -57,7 +57,7 @@
                 preSelection.again = 0;
                 return;
             }
-            
+
             if (selectText === "" || !(/^[^\u4e00-\u9fa5]+$/.test(selectText))) {return;}
             var haveResult = document.documentElement.querySelectorAll(".ChaZD-result-container");
             for (var i = 0, len = haveResult.length; i < len; i++) {
@@ -73,7 +73,7 @@
                 }
                 else {
                     preSelection[key] = selectRange[key];
-                }              
+                }
             }
             if (currentSettings.showPosition === "side") {
                 //console.log("in 1");
@@ -83,7 +83,7 @@
                 //console.log("in 2");
                 showResultNear(selectText, currentSettings.useHttps, selectRange, event);
             }
-        }       
+        }
     };
 
     var showResultSide = function (text, useHttps) {
@@ -141,7 +141,7 @@
             clientHeight = document.documentElement.clientHeight;
         }
         //console.log("[ChaZD]clientHeight : " + clientHeight);
-        
+
         if (range.top >= 150) {
             var bottom = clientHeight - top + 10;
             var arrowBottom = bottom + 1;
@@ -229,16 +229,16 @@
         }, function(response) {
             var resultObj = response;
             $searchingNode.innerHTML = "";
-            if (resultObj.validMessage === "query success") {
+            if (resultObj.validMessage == "query success") {
 
                 $resultContainer.innerHTML = resultObj.titleBlock;
 
                 var singleVoiceButton = $resultContainer.querySelector(".voice-container");
                 buildVoice(singleVoiceButton);
-                
+
                 //console.log("inner onclick:" + singleVoiceButton.onclick);
                 //console.log(document.querySelector(".voice-container") === singleVoiceButton);
-                
+
                 var temp = document.createElement("div");
                 if (resultObj.basicBlock) {
                     temp.innerHTML = resultObj.basicBlock;
@@ -254,13 +254,13 @@
                     $resultContainer.innerHTML = "╮(╯▽╰)╭划词君无能为力啊<br> 还是右键问问谷歌君吧=>";
                 }
             } else {
-                if (resultObj.errorCode == 20) {
+                if (resultObj.errorCode == 103) {
                     $resultContainer.innerHTML = "<p>这段文字太长，词典君无能为力了（┬_┬） <br><br>试试短一点的吧~</p>";
-                } else if (resultObj.errorCode == 40) {
+                } else if (resultObj.errorCode == 102) {
                     $resultContainer.innerHTML = "<p>对不起，这段文字太高深了，请饶过词典君吧（┬_┬）</p>";
                 } else {
                     $resultContainer.innerHTML = "<p>词典君罢工啦（┬_┬）<br><br> 是不是网络不太好？<br><br> 稍后再试一次吧</p>";
-                }                
+                }
             }
         });
 
@@ -288,7 +288,7 @@
     }
 
     function isExist(newRange, oldRange) {
-        if (newRange.top === oldRange.top && 
+        if (newRange.top === oldRange.top &&
             newRange.bottom === oldRange.bottom &&
             newRange.left === oldRange.left &&
             newRange.right === oldRange.right) {
@@ -296,7 +296,7 @@
         }
         return false;
     }
-    
+
     var classNameCollection = ["ChaZD-result-container", "title-container", "title-word", "title-translation", "basic-container", "phonetic-container", "explains-container", "explains-container", "explains-list", "property-container", "explains-item", "voice-container", "us-phonetic-container", "uk-phonetic-container", "web-explains-container", "web-explains-list", "web-key", "explains-item-value", "web-value"];
 
     document.documentElement.addEventListener("mousedown", function(event) {
@@ -341,7 +341,7 @@
         }
         ////////currentQueryWord = "";
     });
-    
+
     var queryEvent = function (event) {
         //console.log("[ChaZD] current useCtrl: " + useCtrl);
         if (currentSettings.selectMode === "noSelect") {return;}
@@ -421,7 +421,7 @@
             window.getSelection().empty();
         }
     };
-    
+
     document.documentElement.addEventListener("mouseup", queryEvent);
     document.documentElement.addEventListener("mouseover", function (e) {
         if (e.target.nodeName === "A" || e.target.nodeName === "a") {
@@ -445,4 +445,3 @@
     document.documentElement.addEventListener("keyup", enableLink);
     document.documentElement.addEventListener("selectstart", queryEvent); //bug!!
 })();
-    

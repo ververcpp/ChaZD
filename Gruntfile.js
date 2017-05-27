@@ -38,6 +38,7 @@ module.exports = function(grunt) {
             }
         },
 
+
         uglify: {
             options: {
                 sourceMap: false
