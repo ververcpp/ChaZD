@@ -105,14 +105,12 @@
                 }
             }, 1000 * currentSettings.showDuration);
         }
-        setTimeout(function() {
-            el = document.querySelector(".ChaZD-result-container").querySelectorAll("*");
-            for (var i in el) {
-                if (el[i].classList) {
-                    el[i].classList.add("ChaZD");
-                }
+        el = document.querySelector(".ChaZD-result-container").querySelectorAll("*");
+        for (var i in el) {
+            if (el[i].classList) {
+                el[i].classList.add("ChaZD");
             }
-        }, 100);
+        }
     };
 
     var showResultNear = function(text, useHttps, range, event) {
@@ -257,7 +255,7 @@
                     temp.innerHTML = resultObj.basicBlock;
                     $resultContainer.appendChild(temp);
                 } else if (resultObj.haveTranslation) {
-                    $resultContainer.querySelector(".title-translation").style.display = "block";
+                    $resultContainer.querySelector(".title-translation").style.cssText = "display: block !important";
                 } else if (resultObj.haveWebTranslation) {
                     temp.innerHTML = resultObj.webBlock;
                     $resultContainer.appendChild(temp);
@@ -272,6 +270,12 @@
                     $resultContainer.innerHTML = "<p>对不起，这段文字太高深了，请饶过词典君吧（┬_┬）</p>";
                 } else {
                     $resultContainer.innerHTML = "<p>词典君罢工啦（┬_┬）<br><br> 是不是网络不太好？<br><br> 稍后再试一次吧</p>";
+                }
+            }
+            el = document.querySelector(".ChaZD-result-container").querySelectorAll("*");
+            for (var i in el) {
+                if (el[i].classList) {
+                    el[i].classList.add("ChaZD");
                 }
             }
         });
