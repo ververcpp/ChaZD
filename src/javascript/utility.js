@@ -1,6 +1,6 @@
 var api = {
-    key: 1116151381,
-    keyfrom : "youdaocidian"
+    key: 1295348849,
+    keyfrom : "iWords1"
 };
 
 var urls = {

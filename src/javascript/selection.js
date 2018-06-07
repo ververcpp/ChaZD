@@ -1,4 +1,4 @@
-(function(){
+(function() {
     var preSelection = {
         top: 0,
         bottom: 0,
@@ -50,30 +50,35 @@
 
     var queryInPage = function(event) {
         var selection = window.getSelection && window.getSelection();
-        if(selection && selection.rangeCount > 0) {
+        if (selection && selection.rangeCount > 0) {
             var selectText = trim(selection.toString());
             var selectRange = selection.getRangeAt(0).getBoundingClientRect();
             if (isExist(selectRange, preSelection) && preSelection.again) {
                 preSelection.again = 0;
                 return;
             }
-            
-            if (selectText === "" || !(/^[^\u4e00-\u9fa5]+$/.test(selectText))) {return;}
+
+            if (selectText === "" || !(/^[^\u4e00-\u9fa5]+$/.test(selectText))) {
+                return;
+            }
             var haveResult = document.documentElement.querySelectorAll(".ChaZD-result-container");
             for (var i = 0, len = haveResult.length; i < len; i++) {
-                if (haveResult[i].getAttribute("data-text").toLowerCase() === selectText.toLowerCase()){return;}
+                if (haveResult[i].getAttribute("data-text").toLowerCase() === selectText.toLowerCase()) {
+                    return;
+                }
             }
             ////////if (currentQueryWord !== "" && selectText === currentQueryWord) {return;}
-            chrome.storage.sync.set({"currentWord" : selectText}, function() {
+            chrome.storage.sync.set({
+                "currentWord": selectText
+            }, function() {
                 //console.log("[ChaZD] Success update settings currentWord = " + selectText);
             });
             for (var key in preSelection) {
                 if (key == "again") {
                     preSelection[key] = 1;
-                }
-                else {
+                } else {
                     preSelection[key] = selectRange[key];
-                }              
+                }
             }
             if (currentSettings.showPosition === "side") {
                 //console.log("in 1");
@@ -83,26 +88,32 @@
                 //console.log("in 2");
                 showResultNear(selectText, currentSettings.useHttps, selectRange, event);
             }
-        }       
+        }
     };
 
-    var showResultSide = function (text, useHttps) {
+    var showResultSide = function(text, useHttps) {
         //if(isExist(text)) return;
         var $resultSideContainer = makeResultContainer(text, useHttps);
         $resultSideContainer.classList.add("ChaZD-result-side");
         document.documentElement.appendChild($resultSideContainer);
 
         if (currentSettings.autoHide) {
-            timeout = setTimeout(function () {
+            timeout = setTimeout(function() {
                 if (document.querySelector(".ChaZD-result-container")) {
                     document.documentElement.removeChild($resultSideContainer);
                     ////////currentQueryWord = "";
                 }
             }, 1000 * currentSettings.showDuration);
         }
+        el = document.querySelector(".ChaZD-result-container").querySelectorAll("*");
+        for (var i in el) {
+            if (el[i].classList) {
+                el[i].classList.add("ChaZD");
+            }
+        }
     };
 
-    var showResultNear = function (text, useHttps, range, event) {
+    var showResultNear = function(text, useHttps, range, event) {
         //if(isExist(text)) return;
         var resultNearContainer = makeResultContainer(text, useHttps);
         var arrowMain = makeArrowDiv();
@@ -125,8 +136,8 @@
         //console.log("arrow width: " + arrowWidth);
         var left = range.left + window.pageXOffset;
         var top = range.top + window.pageYOffset;
-        var rangeMiddle = rangeWidth/2 + left;
-        var containerLeft = left - (containerWidth - rangeWidth)/2;
+        var rangeMiddle = rangeWidth / 2 + left;
+        var containerLeft = left - (containerWidth - rangeWidth) / 2;
         var arrowLeft = rangeMiddle - 12;
 
         if (containerLeft < window.pageXOffset) {
@@ -141,7 +152,7 @@
             clientHeight = document.documentElement.clientHeight;
         }
         //console.log("[ChaZD]clientHeight : " + clientHeight);
-        
+
         if (range.top >= 150) {
             var bottom = clientHeight - top + 10;
             var arrowBottom = bottom + 1;
@@ -186,7 +197,7 @@
         }
 
         if (currentSettings.autoHide) {
-            timeout = setTimeout(function () {
+            timeout = setTimeout(function() {
                 if (document.querySelector(".ChaZD-result-container") && document.querySelector(".ChaZD-arrow-main")) {
                     document.documentElement.removeChild(resultNearContainer);
                     document.documentElement.removeChild(arrowMain);
@@ -199,7 +210,7 @@
         // }, 1000 * duration);
     };
 
-    var makeArrowDiv = function () {
+    var makeArrowDiv = function() {
         // var arrowDivMain = document.createElement("div");
         // arrowDivMain.classList.add("ChaZD-arrow-main");
         var arrowDivMain = document.createElement("div");
@@ -214,7 +225,7 @@
         return arrowDivMain;
     };
 
-    var makeResultContainer = function (text, useHttps) {
+    var makeResultContainer = function(text, useHttps) {
         var $resultContainer = document.createElement("div");
         $resultContainer.classList.add("ChaZD-result-container");
         $resultContainer.setAttribute("data-text", text);
@@ -235,17 +246,16 @@
 
                 var singleVoiceButton = $resultContainer.querySelector(".voice-container");
                 buildVoice(singleVoiceButton);
-                
+
                 //console.log("inner onclick:" + singleVoiceButton.onclick);
                 //console.log(document.querySelector(".voice-container") === singleVoiceButton);
-                
+
                 var temp = document.createElement("div");
                 if (resultObj.basicBlock) {
                     temp.innerHTML = resultObj.basicBlock;
                     $resultContainer.appendChild(temp);
-                }
-                else if (resultObj.haveTranslation) {
-                    $resultContainer.querySelector(".title-translation").style.display = "block";
+                } else if (resultObj.haveTranslation) {
+                    $resultContainer.querySelector(".title-translation").style.cssText = "display: block !important";
                 } else if (resultObj.haveWebTranslation) {
                     temp.innerHTML = resultObj.webBlock;
                     $resultContainer.appendChild(temp);
@@ -260,7 +270,13 @@
                     $resultContainer.innerHTML = "<p>对不起，这段文字太高深了，请饶过词典君吧（┬_┬）</p>";
                 } else {
                     $resultContainer.innerHTML = "<p>词典君罢工啦（┬_┬）<br><br> 是不是网络不太好？<br><br> 稍后再试一次吧</p>";
-                }                
+                }
+            }
+            el = document.querySelector(".ChaZD-result-container").querySelectorAll("*");
+            for (var i in el) {
+                if (el[i].classList) {
+                    el[i].classList.add("ChaZD");
+                }
             }
         });
 
@@ -277,18 +293,18 @@
         if (currentSettings.autoAudio === true) {
             audioBlock.play();
         }
-        audioBlock.addEventListener("ended", function (event) {
+        audioBlock.addEventListener("ended", function(event) {
             //console.log("loading src: " + this.getAttribute("src"));
             this.load();
         });
-        voice.addEventListener("click", function (event) {
+        voice.addEventListener("click", function(event) {
             //console.log("playing src: " + audioBlock.getAttribute("src"));
             audioBlock.play();
         });
     }
 
     function isExist(newRange, oldRange) {
-        if (newRange.top === oldRange.top && 
+        if (newRange.top === oldRange.top &&
             newRange.bottom === oldRange.bottom &&
             newRange.left === oldRange.left &&
             newRange.right === oldRange.right) {
@@ -296,7 +312,7 @@
         }
         return false;
     }
-    
+
     var classNameCollection = ["ChaZD-result-container", "title-container", "title-word", "title-translation", "basic-container", "phonetic-container", "explains-container", "explains-container", "explains-list", "property-container", "explains-item", "voice-container", "us-phonetic-container", "uk-phonetic-container", "web-explains-container", "web-explains-list", "web-key", "explains-item-value", "web-value"];
 
     document.documentElement.addEventListener("mousedown", function(event) {
@@ -325,7 +341,9 @@
                 document.documentElement.removeChild(chazdArrow[i]);
             }
         }
-        chrome.storage.sync.set({"currentWord" : ""});
+        chrome.storage.sync.set({
+            "currentWord": ""
+        });
         ////////currentQueryWord = "";
         //clearSelection(event);
     });
@@ -341,10 +359,12 @@
         }
         ////////currentQueryWord = "";
     });
-    
-    var queryEvent = function (event) {
+
+    var queryEvent = function(event) {
         //console.log("[ChaZD] current useCtrl: " + useCtrl);
-        if (currentSettings.selectMode === "noSelect") {return;}
+        if (currentSettings.selectMode === "noSelect") {
+            return;
+        }
         if (currentSettings.selectMode === "useCtrl") {
             //console.log("current togglekey: " + toggleKey);
             if (currentSettings.toggleKey === "ctrl") {
@@ -375,13 +395,13 @@
 
     var link = null;
 
-    var focusLink = function (event) {
+    var focusLink = function(event) {
         if (currentSettings.linkQuery) {
             //event.stopPropagation();
             //console.log("focusLink");
             link = event.target;
             //console.log(link);
-            if(event.shiftKey) {
+            if (event.shiftKey) {
                 // alert("have shift");
                 disableLink(event);
             }
@@ -389,7 +409,7 @@
         }
     };
 
-    var blurLink = function (event) {
+    var blurLink = function(event) {
         if (currentSettings.linkQuery) {
             //event.stopPropagation();
             if (link && link.classList.contains("ChaZD-link")) {
@@ -399,7 +419,7 @@
         }
     };
 
-    var disableLink = function (event) {
+    var disableLink = function(event) {
         if (link && event.shiftKey) {
             clearSelection(event);
             link.setAttribute("ChaZD-href", link.getAttribute("href"));
@@ -408,7 +428,7 @@
         }
     };
 
-    var enableLink = function (event, ignoreKey) {
+    var enableLink = function(event, ignoreKey) {
         if (link && (ignoreKey || event.keyCode == 16)) {
             link.setAttribute("href", link.getAttribute("ChaZD-href"));
             link.removeAttribute("ChaZD-href");
@@ -416,19 +436,19 @@
         }
     };
 
-    var clearSelection = function (event) {
+    var clearSelection = function(event) {
         if (currentSettings.linkQuery && event.shiftKey) {
             window.getSelection().empty();
         }
     };
-    
+
     document.documentElement.addEventListener("mouseup", queryEvent);
-    document.documentElement.addEventListener("mouseover", function (e) {
+    document.documentElement.addEventListener("mouseover", function(e) {
         if (e.target.nodeName === "A" || e.target.nodeName === "a") {
             focusLink(e);
         }
     });
-    document.documentElement.addEventListener("mouseout", function (e) {
+    document.documentElement.addEventListener("mouseout", function(e) {
         if (e.target.nodeName === "A" || e.target.nodeName === "a") {
             blurLink(e);
         }
@@ -445,4 +465,3 @@
     document.documentElement.addEventListener("keyup", enableLink);
     document.documentElement.addEventListener("selectstart", queryEvent); //bug!!
 })();
-    
